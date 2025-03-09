@@ -184,9 +184,13 @@ public class Board { // initialize board and pieces
 				if (piece.capture(targetPiece)) { // piece is stronger/as strong as
 					piece.setPosition(newR, newC);
 					targetTile.setPiece(piece, newR, newC);
+					board[oldR][oldC].setNull();
+					return true;
 				}
-				else // piece is weaker
+				else { // piece is weaker
 					piece.setPosition(oldR, oldC); // reverts to original position
+					return false;
+				}
 			}
 			
 			else
@@ -199,10 +203,12 @@ public class Board { // initialize board and pieces
 			if (piece.capture(targetPiece)) { // capture piece
 				piece.setPosition(newR, newC); // update position of piece
 				targetTile.setPiece(piece, newR, newC); // move piece on board
+				board[oldR][oldC].setNull();
+				return true;
 			}
 		}
 		
-		//piece.setPosition(newR, newC); // update positions
+		piece.setPosition(newR, newC); // update positions
 		// after moving, set the old position back to its original object
 		
 		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
