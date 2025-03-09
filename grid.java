@@ -21,6 +21,10 @@ public class Grid {
 	public Piece getPiece () {
 		return piece;
 	}
+
+	public void setNull(){
+		this.piece = null;
+	}
 	
 	public char getTerrain () {
 		return terrain;

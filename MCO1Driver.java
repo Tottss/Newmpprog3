@@ -44,6 +44,7 @@ public class MCO1Driver {
               System.out.println("Player 2 won");
             }
           }
+          b.displayBoard();
           // move piece method here
           //didMove = [method here];
           

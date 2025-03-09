@@ -204,8 +204,9 @@ public class Board { // initialize board and pieces
 		
 		//piece.setPosition(newR, newC); // update positions
 		// after moving, set the old position back to its original object
-		board[oldR][oldC].setPiece(null, -1, -1);
+		
 		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
+		board[oldR][oldC].setNull();
 		return isValidMove(piece, m);
 	}
 	
