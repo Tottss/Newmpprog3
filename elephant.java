@@ -1,4 +1,4 @@
-package mpprog3;
+
 
 public class elephant extends Piece {
 

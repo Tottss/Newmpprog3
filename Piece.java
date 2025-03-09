@@ -1,5 +1,5 @@
 
-package mpprog3;
+
 
 
 public class Piece {
@@ -11,9 +11,10 @@ public class Piece {
 	protected int r; // position gets updated after a move
 	protected int c; // position gets updated after a move
 	
-	public Piece (String pieceName, int strength) {
+	public Piece (String pieceName, int strength, int playerNo) {
 		this.pieceName = pieceName;
 		this.strength = strength;
+		this.playerNo = playerNo;
 		alive = true;
 		weak = false;
 	}
@@ -37,7 +38,7 @@ public class Piece {
 	public int getColumn () {
 		return c;
 	}
-	
+	 
 	public boolean getWeak () {
 		return weak;
 	}

@@ -43,16 +43,16 @@ public class Board { // initialize board and pieces
 	
 	public void setBases () {
 		// left base
-		board[2][0].setTerrain('#');
+		//board[2][0].setTerrain('#');
 		board[3][0].setTerrain('@');
-		board[3][1].setTerrain('#');
-		board[4][0].setTerrain('#');
+		//board[3][1].setTerrain('#');
+		//board[4][0].setTerrain('#');
 		
 		// right base;
-		board[2][8].setTerrain('#');
+		//board[2][8].setTerrain('#');
 		board[3][8].setTerrain('@');
-		board[3][7].setTerrain('#');
-		board[4][8].setTerrain('#');
+		//board[3][7].setTerrain('#');
+		//board[4][8].setTerrain('#');
 	}
 	
 	public void instantiatePieces () { // create pieces for player 1 and 2
@@ -67,7 +67,7 @@ public class Board { // initialize board and pieces
 			}
 		}
 	}
-	
+	 
 	public void setPieces () {
 		board[0][0].setPiece(findPiece("T1"), 0, 0);
 		board[6][8].setPiece(findPiece("T2"), 6, 8);
