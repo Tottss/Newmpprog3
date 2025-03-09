@@ -43,16 +43,16 @@ public class Board { // initialize board and pieces
 	
 	public void setBases () {
 		// left base
-		//board[2][0].setTerrain('#');
+		// board[2][0].setTerrain('#');
 		board[3][0].setTerrain('@');
-		//board[3][1].setTerrain('#');
-		//board[4][0].setTerrain('#');
+		// board[3][1].setTerrain('#');
+		// board[4][0].setTerrain('#');
 		
 		// right base;
-		//board[2][8].setTerrain('#');
+		// board[2][8].setTerrain('#');
 		board[3][8].setTerrain('@');
-		//board[3][7].setTerrain('#');
-		//board[4][8].setTerrain('#');
+		// board[3][7].setTerrain('#');
+		// board[4][8].setTerrain('#');
 	}
 	
 	public void instantiatePieces () { // create pieces for player 1 and 2
@@ -67,31 +67,31 @@ public class Board { // initialize board and pieces
 			}
 		}
 	}
-	 
+	
 	public void setPieces () {
-		board[0][0].setPiece(findPiece("T1"), 0, 0);
-		board[6][8].setPiece(findPiece("T2"), 6, 8);
+		// board[0][0].setPiece(findPiece("T1"), 0, 0);
+		// board[6][8].setPiece(findPiece("T2"), 6, 8);
 		
-		board[0][2].setPiece(findPiece("E1"), 0, 2);
-		board[6][6].setPiece(findPiece("E2"), 6, 6);
+		// board[0][2].setPiece(findPiece("E1"), 0, 2);
+		// board[6][6].setPiece(findPiece("E2"), 6, 6);
 		
 		board[1][1].setPiece(findPiece("C1"), 1, 1);
 		board[5][7].setPiece(findPiece("C2"), 5, 7);
 		
-		board[2][2].setPiece(findPiece("W1"), 2, 2);
-		board[4][6].setPiece(findPiece("W2"), 4, 6);
+		// board[2][2].setPiece(findPiece("W1"), 2, 2);
+		// board[4][6].setPiece(findPiece("W2"), 4, 6);
 		
-		board[4][2].setPiece(findPiece("LD1"), 4, 2);
-		board[2][6].setPiece(findPiece("LD2"), 2, 6);
+		// board[4][2].setPiece(findPiece("LD1"), 4, 2);
+		// board[2][6].setPiece(findPiece("LD2"), 2, 6);
 		
 		board[5][1].setPiece(findPiece("D1"), 5, 1);
 		board[1][7].setPiece(findPiece("D2"), 1, 7);
 		
-		board[6][2].setPiece(findPiece("R1"), 6, 2);
-		board[0][6].setPiece(findPiece("R2"), 0, 6);
+		// board[6][2].setPiece(findPiece("R1"), 6, 2);
+		// board[0][6].setPiece(findPiece("R2"), 0, 6);
 		
-		board[6][0].setPiece(findPiece("LN1"), 6, 0);
-		board[0][8].setPiece(findPiece("LN2"), 0, 8);
+		// board[6][0].setPiece(findPiece("LN1"), 6, 0);
+		// board[0][8].setPiece(findPiece("LN2"), 0, 8);
 	}
 	
 	public Piece findPiece (String name) { // finds piece by its String name in array list
@@ -130,7 +130,7 @@ public class Board { // initialize board and pieces
 		return board[r - 1][c - 1].getPiece();
 	}
 	
-	public boolean movePiece (Piece piece, char m) { // updates position of piece; returns value of isValidMove()
+	public boolean movePiece (Piece piece, String m) { // updates position of piece; returns value of isValidMove()
 		int oldR = piece.getRow(), oldC = piece.getColumn(), newR = oldR, newC = oldC;
 		boolean valid;
 		
@@ -156,43 +156,60 @@ public class Board { // initialize board and pieces
 		if (!isValidMove(piece, m))
 			return false;
 		
-		if (board[newR][newC].getObject().equals('~') && piece.canCross()) { // for lions and tigers only
-			piece.crossLake(m);
-			board[newR][newC].setPiece(piece, newR, newC);
-			// implement if there's an opposing piece once tiger/lion crosses
-		}
-		
 		switch (m) {
-			case 'W':
+			case "W":
 				newR--;
 				break;
-			case 'S': 
+			case "S": 
 				newR++; 
 				break;
-			case 'A': 
+			case "A": 
 				newC-- ; 
 				break;
-			case 'D': 
+			case "D": 
 				newC++; 
 				break;
 			default: 
 				return false; // invalid move input
 		}
 		
-		Grid targetTile = board[newR][newC], originalTile = board[oldR][oldC].getObject();
+		Grid targetTile = board[newR][newC];
+		
+		if (targetTile.getObject().equals('~') && piece.canCross()) { // for lions and tigers only
+			piece.crossLake(m); // note: this already updates the piece's position
+			
+			if (targetTile.getObject() instanceof Piece) { // if resulting tile contains an opposing piece
+				Piece targetPiece = targetTile.getPiece();
+				
+				if (piece.capture(targetPiece)) { // piece is stronger/as strong as
+					piece.setPosition(newR, newC);
+					targetTile.setPiece(piece, newR, newC);
+				}
+				else // piece is weaker
+					piece.setPosition(oldR, oldC); // reverts to original position
+			}
+			
+			else
+				board[newR][newC].setPiece(piece, newR, newC); // there's no piece on resulting tile
+		}
 		
 		if (targetTile.getObject() instanceof Piece) { // capturing opposing piece
 			Piece targetPiece = targetTile.getPiece();
-			targetPiece.setDead();
+			
+			if (piece.capture(targetPiece)) { // capture piece
+				piece.setPosition(newR, newC); // update position of piece
+				targetTile.setPiece(piece, newR, newC); // move piece on board
+			}
 		}
 		
 		piece.setPosition(newR, newC); // update positions
 		// after moving, set the old position back to its original object
-		board[newR][newC].setPiece(piece); // update object on board to its new position
+		board[oldR][oldC].setPiece(null, -1, -1);
+		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
 		return isValidMove(piece, m);
 	}
 	
-	public boolean isValidMove (Piece piece, char m) { // checks if piece move is valid
+	public boolean isValidMove (Piece piece, String m) { // checks if piece move is valid
 		/*
 		Moves can be invalid if:
 		- out of bounds (✓)
@@ -218,16 +235,16 @@ public class Board { // initialize board and pieces
 		int newR = currR, newC = currC;
 		
 		switch (m) {
-			case 'W':
+			case "W":
 				newR--;
 				break;
-			case 'S': 
+			case "S": 
 				newR++; 
 				break;
-			case 'A': 
+			case "A": 
 				newC-- ; 
 				break;
-			case 'D': 
+			case "D": 
 				newC++; 
 				break;
 			default: 
@@ -321,14 +338,27 @@ public class Board { // initialize board and pieces
 		return true;
 	}
 	
+	public Piece searchforPiece(String pieceName, int playerNo){
+		int row,col;
+
+		for (row = 0; row < 7; row++){
+			for (col = 0; col < 9; col++){
+				if(board[row][col].getPiece().getNumber() == playerNo && board[row][col].getPiece().getPieceName().equals(pieceName)){
+					return board[row][col].getPiece();
+				}
+			}
+		}
+		return null;
+	}
+	
 	// public void trap (Piece piece) {
-		// piece can't go to its own traps?
-		// piece.setWeak();
+		//piece can't go to its own traps?
+		//piece.setWeak();
 	// }
 	
 	// public void homeBase (Piece piece) {
 		// if (piece.getNumber() == 1)
-			// determines which player wins
+			//determines which player wins
 	// }
 	
 	// public void replaceObject () { // replaces whatever the piece occupies on the tile
