@@ -103,6 +103,9 @@ public class Piece {
         return this.pieceName.equals("LN") || this.pieceName.equals("T"); // checking if animal can cross lake tile : default false
     }
 
+	public int getPlayerNumber(){
+		return playerNo;
+	}
 	@Override
 	public String toString () {
 		return pieceName;
