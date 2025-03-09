@@ -99,7 +99,7 @@ public class Piece {
             return this.pieceName.equals("R");
 	}
 	
-	public boolean canCross(Piece piece) {
+	public boolean canCross() {
         return this.pieceName.equals("LN") || this.pieceName.equals("T"); // checking if animal can cross lake tile : default false
     }
 

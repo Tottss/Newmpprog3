@@ -156,7 +156,7 @@ public class Board { // initialize board and pieces
 		if (!isValidMove(piece, m))
 			return false;
 		
-		if (board[newR][newC].getObject() == '~' && piece.canCross()) { // for lions and tigers only
+		if (board[newR][newC].getObject().equals('~') && piece.canCross()) { // for lions and tigers only
 			piece.crossLake(m);
 			board[newR][newC].setPiece(piece, newR, newC);
 			// implement if there's an opposing piece once tiger/lion crosses
@@ -242,14 +242,14 @@ public class Board { // initialize board and pieces
 		if (isRestrictedTile(piece, newR, newC)) // if targetTile is a friendly trap or home base
 			return false;
 		
-		if (targetTile.getObject() == '~' && !piece.canSwim()) // if piece wants to go to lake but can't swim
+		if (targetTile.getObject().equals('~') && !piece.canSwim()) // if piece wants to go to lake but can't swim
 			return false;
 		
 		// if piece can cross but lake row/col is occupied with rat
-		if (targetTile.getObject() == '~' && piece.canCross() && !isLakeRowEmpty(newR))
+		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeRowEmpty(newR))
 			return false;
 		
-		if (targetTile.getObject() == '~' && piece.canCross() && !isLakeColEmpty(newR, currC))
+		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeColEmpty(newR, currC))
 			return false;
 		
 		if (targetTile.getObject() instanceof Piece) {
