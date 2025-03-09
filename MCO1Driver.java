@@ -1,4 +1,3 @@
-import java.awt.SystemTray;
 import java.util.*;
 
 public class MCO1Driver {
@@ -28,11 +27,11 @@ public class MCO1Driver {
       
       while (win == 0) {
         didMove = true;
-        while (didMove == false) { 
+        while (didMove == true) { 
           System.out.println("Player" + playerTurn + "'s turn");
           System.out.println("Choose which piece to move by giving the displayed character: ");
           pieceName = s.nextLine();
-          //piece = searchforPiece(pieceName,playerTurn);
+          piece = b.searchforPiece(pieceName,playerTurn);
           System.out.println("select direction to move the piece");
           move = s.nextLine();
           didMove = b.movePiece(piece, move);

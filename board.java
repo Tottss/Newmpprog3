@@ -202,7 +202,7 @@ public class Board { // initialize board and pieces
 			}
 		}
 		
-		piece.setPosition(newR, newC); // update positions
+		//piece.setPosition(newR, newC); // update positions
 		// after moving, set the old position back to its original object
 		board[oldR][oldC].setPiece(null, -1, -1);
 		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
@@ -343,8 +343,12 @@ public class Board { // initialize board and pieces
 
 		for (row = 0; row < 7; row++){
 			for (col = 0; col < 9; col++){
-				if(board[row][col].getPiece().getNumber() == playerNo && board[row][col].getPiece().getPieceName().equals(pieceName)){
-					return board[row][col].getPiece();
+				if(board[row][col].getObject() instanceof Piece){
+					if(board[row][col].getPiece().getNumber() == playerNo && board[row][col].getPiece().getPieceName().equals(pieceName)){
+						if (board[row][col].getPiece() != null){
+						return board[row][col].getPiece();
+						}
+					}
 				}
 			}
 		}
