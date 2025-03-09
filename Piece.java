@@ -94,12 +94,13 @@ public class Piece {
 		weak = false;
 	}
 	
-	public boolean canSwim(Piece piece){
-		return false; // checking if animal can stay on lake tile :default false
+	public boolean canSwim(){
+            // checking if animal can stay on lake tile :default false
+            return this.pieceName.equals("R");
 	}
 	
 	public boolean canCross(Piece piece) {
-        return false; // checking if animal can cross lake tile : default false
+        return this.pieceName.equals("LN") || this.pieceName.equals("T"); // checking if animal can cross lake tile : default false
     }
 
 	@Override
