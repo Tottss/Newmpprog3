@@ -106,6 +106,16 @@ public class Piece {
 	public int getPlayerNumber(){
 		return playerNo;
 	}
+
+	public boolean didWin(){
+		if (this.r == 3 && this.c == 0 && playerNo == 2){
+			return true;
+		}
+		if (this.r == 3 && this.c == 8 && playerNo == 1){
+			return true;
+		}
+		return false;
+	}
 	@Override
 	public String toString () {
 		return pieceName;
