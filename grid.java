@@ -1,10 +1,8 @@
-package mpprog3;
-
-public class grid {
+public class Grid {
 	private Piece piece;
 	private char terrain; // ~, #, @, .
 	
-	public grid (char terrain) {
+	public Grid (char terrain) {
 		this.terrain = terrain;
 	}
 	
@@ -28,8 +26,9 @@ public class grid {
 		return terrain;
 	}
 	
-	public void setPiece (Piece piece) {
+	public void setPiece (Piece piece, int r, int c) { // sets a piece onto a specific grid in board
 		this.piece = piece;
+		this.piece.setPosition(r, c); // updates r and c of the piece
 	}
 	
 	public void setTerrain (char terrain) {
