@@ -92,11 +92,11 @@ public class Piece {
 	
 	public boolean canSwim(){
             // checking if animal can stay on lake tile :default false
-            return this.pieceName.equals("R");
+            return this.pieceName.equals("R1") || this.pieceName.equals("R2");
 	}
 	
 	public boolean canCross() {
-        return this.pieceName.equals("LN") || this.pieceName.equals("T"); // checking if animal can cross lake tile : default false
+        return this.pieceName.equals("LN1") || this.pieceName.equals("T1") || this.pieceName.equals("LN2") || this.pieceName.equals("T2"); // checking if animal can cross lake tile : default false
     }
 	
 	public void crossLake (String m) {

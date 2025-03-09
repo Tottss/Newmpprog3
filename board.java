@@ -69,29 +69,29 @@ public class Board { // initialize board and pieces
 	}
 	
 	public void setPieces () {
-		// board[0][0].setPiece(findPiece("T1"), 0, 0);
-		// board[6][8].setPiece(findPiece("T2"), 6, 8);
+		 board[0][0].setPiece(findPiece("T1"), 0, 0);
+		 board[6][8].setPiece(findPiece("T2"), 6, 8);
 		
-		// board[0][2].setPiece(findPiece("E1"), 0, 2);
-		// board[6][6].setPiece(findPiece("E2"), 6, 6);
+		 board[0][2].setPiece(findPiece("E1"), 0, 2);
+		 board[6][6].setPiece(findPiece("E2"), 6, 6);
 		
 		board[1][1].setPiece(findPiece("C1"), 1, 1);
 		board[5][7].setPiece(findPiece("C2"), 5, 7);
 		
-		// board[2][2].setPiece(findPiece("W1"), 2, 2);
-		// board[4][6].setPiece(findPiece("W2"), 4, 6);
+		 board[2][2].setPiece(findPiece("W1"), 2, 2);
+		 board[4][6].setPiece(findPiece("W2"), 4, 6);
 		
-		// board[4][2].setPiece(findPiece("LD1"), 4, 2);
-		// board[2][6].setPiece(findPiece("LD2"), 2, 6);
+		 board[4][2].setPiece(findPiece("LD1"), 4, 2);
+		 board[2][6].setPiece(findPiece("LD2"), 2, 6);
 		
 		board[5][1].setPiece(findPiece("D1"), 5, 1);
 		board[1][7].setPiece(findPiece("D2"), 1, 7);
 		
-		// board[6][2].setPiece(findPiece("R1"), 6, 2);
-		// board[0][6].setPiece(findPiece("R2"), 0, 6);
+		 board[6][2].setPiece(findPiece("R1"), 6, 2);
+		 board[0][6].setPiece(findPiece("R2"), 0, 6);
 		
-		// board[6][0].setPiece(findPiece("LN1"), 6, 0);
-		// board[0][8].setPiece(findPiece("LN2"), 0, 8);
+		 board[6][0].setPiece(findPiece("LN1"), 6, 0);
+		 board[0][8].setPiece(findPiece("LN2"), 0, 8);
 	}
 	
 	public Piece findPiece (String name) { // finds piece by its String name in array list
@@ -132,7 +132,7 @@ public class Board { // initialize board and pieces
 	
 	public boolean movePiece (Piece piece, String m) { // updates position of piece; returns value of isValidMove()
 		int oldR = piece.getRow(), oldC = piece.getColumn(), newR = oldR, newC = oldC;
-		boolean valid;
+		boolean valid = false;
 		
 		/*
 		When a piece gets eaten:
@@ -153,9 +153,13 @@ public class Board { // initialize board and pieces
 		if (!piece.getAlive()) // piece chosen SHOULD be alive
 			return false;
 			
-		if (!isValidMove(piece, m))
+		if (!isValidMove(piece, m)){
+			System.out.println("not valid");
 			return false;
-		
+		}
+		else if(isValidMove(piece, m)){
+			valid = true;
+		}
 		switch (m) {
 			case "W":
 				newR--;
@@ -193,8 +197,9 @@ public class Board { // initialize board and pieces
 				}
 			}
 			
-			else
+			else{
 				board[newR][newC].setPiece(piece, newR, newC); // there's no piece on resulting tile
+			}
 		}
 		
 		if (targetTile.getObject() instanceof Piece) { // capturing opposing piece
@@ -213,7 +218,8 @@ public class Board { // initialize board and pieces
 		
 		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
 		board[oldR][oldC].setNull();
-		return isValidMove(piece, m);
+		
+		return valid;
 	}
 	
 	public boolean isValidMove (Piece piece, String m) { // checks if piece move is valid
@@ -266,16 +272,24 @@ public class Board { // initialize board and pieces
 		if (isRestrictedTile(piece, newR, newC)) // if targetTile is a friendly trap or home base
 			return false;
 		
-		if (targetTile.getObject().equals('~') && !piece.canSwim()) // if piece wants to go to lake but can't swim
+		if (targetTile.getObject().equals('~') && !piece.canSwim() && !piece.canCross()){ // if piece wants to go to lake but can't swim
 			return false;
+		}	
+
+		if (targetTile.getObject().equals('~') && piece.canSwim() && !piece.canCross()){
+			return true;
+		} // if piece wants to go to lake but can't swim
+			
 		
-		// if piece can cross but lake row/col is occupied with rat
-		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeRowEmpty(newR))
+		// if piece can cross but lake row/col is occupied with ratR
+		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeRowEmpty(newR)){
 			return false;
+		}
 		
-		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeColEmpty(newR, currC))
+		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeColEmpty(newR, currC)){
 			return false;
-		
+		}
+
 		if (targetTile.getObject() instanceof Piece) {
 			Piece targetPiece = targetTile.getPiece();
 			if (piece.getNumber() == targetPiece.getNumber()) // ensures it can only capture/move to opposing pieces
@@ -353,7 +367,8 @@ public class Board { // initialize board and pieces
 				if(board[row][col].getObject() instanceof Piece){
 					if(board[row][col].getPiece().getNumber() == playerNo && board[row][col].getPiece().getPieceName().equals(pieceName)){
 						if (board[row][col].getPiece() != null){
-						return board[row][col].getPiece();
+							return board[row][col].getPiece();
+						
 						}
 					}
 				}

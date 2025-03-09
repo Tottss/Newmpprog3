@@ -3,18 +3,21 @@ import java.util.*;
 public class MCO1Driver {
     
   
-
+  public static void clearScreen() {  
+    System.out.print("\033[H\033[2J");  
+    System.out.flush();  
+}
   
     public static void main(String[] args) {
       Scanner s = new Scanner(System.in);
       Board b = new Board();
-	    b.displayBoard();
       int win = 0;
       int playerTurn = 1;
       String pieceName;
       boolean didMove;
       Piece piece;
       String move;
+      boolean checker = true;
       // generate board
       // generate pieces
       // player 1 moves then 2 repeat
@@ -27,11 +30,13 @@ public class MCO1Driver {
       
       while (win == 0) {
         didMove = true;
-        while (didMove == true) { 
+          while (checker){
+            b.displayBoard();
           System.out.println("Player" + playerTurn + "'s turn");
           System.out.println("Choose which piece to move by giving the displayed character: ");
           pieceName = s.nextLine();
           piece = b.searchforPiece(pieceName,playerTurn);
+          
           System.out.println("select direction to move the piece");
           move = s.nextLine();
           didMove = b.movePiece(piece, move);
@@ -39,18 +44,22 @@ public class MCO1Driver {
             win = piece.playerNo;
             if (win == 1){
               System.out.println("Player 1 won");
+              b.displayBoard();
+              break;
             }
             else if (win == 2){
               System.out.println("Player 2 won");
+              b.displayBoard();
+              break;
             }
           }
-          b.displayBoard();
+          
           // move piece method here
           //didMove = [method here];
           
-  
+          //clearScreen();
           if (didMove == true){
-            playerTurn = 2;
+            playerTurn = (playerTurn % 2) + 1;
           }
           else if (didMove == false){
             System.out.println("Error moving chosen piece try again");
