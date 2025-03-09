@@ -1,3 +1,4 @@
+import java.awt.SystemTray;
 import java.util.*;
 
 public class MCO1Driver {
@@ -14,6 +15,7 @@ public class MCO1Driver {
       String pieceName;
       boolean didMove;
       Piece piece;
+      String move;
       // generate board
       // generate pieces
       // player 1 moves then 2 repeat
@@ -30,7 +32,19 @@ public class MCO1Driver {
           System.out.println("Player" + playerTurn + "'s turn");
           System.out.println("Choose which piece to move by giving the displayed character: ");
           pieceName = s.nextLine();
-          
+          //piece = searchforPiece(pieceName,playerTurn);
+          System.out.println("select direction to move the piece");
+          move = s.nextLine();
+          didMove = b.movePiece(piece, move);
+          if (piece.didWin()){
+            win = piece.playerNo;
+            if (win == 1){
+              System.out.println("Player 1 won");
+            }
+            else if (win == 2){
+              System.out.println("Player 2 won");
+            }
+          }
           // move piece method here
           //didMove = [method here];
           
