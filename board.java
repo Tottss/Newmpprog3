@@ -180,8 +180,17 @@ public class Board { // initialize board and pieces
 		Grid targetTile = board[newR][newC];
 		
 		if (targetTile.getObject().equals('~') && piece.canCross()) { // for lions and tigers only
-			piece.crossLake(m); // note: this already updates the piece's position
+			//piece.crossLake(m); // note: this already updates the piece's position
+			//System.out.println(piece.getRow() + " "+ piece.getColumn());
 			
+			if (m == "W")
+				targetTile = board[newR-2][newC];
+			else if (m == "S")
+				targetTile = board[newR+2][newC];
+			else if (m == "A")
+				targetTile = board[newR][newC-3];
+			else if (m == "D")
+				targetTile = board[newR][newC+3];
 			if (targetTile.getObject() instanceof Piece) { // if resulting tile contains an opposing piece
 				Piece targetPiece = targetTile.getPiece();
 				
@@ -198,7 +207,35 @@ public class Board { // initialize board and pieces
 			}
 			
 			else{
-				board[newR][newC].setPiece(piece, newR, newC); // there's no piece on resulting tile
+				if ("W".equals(m)){
+					piece.setPosition(newR-2, newC); 
+					
+					
+					board[newR-2][newC].setPiece(piece, newR-2, newC); 
+					board[oldR][oldC].setNull();
+					}
+					else if ("S".equals(m)){
+					piece.setPosition(newR+2, newC); // update positions
+					// after moving, set the old position back to its original object
+					
+					board[newR+2][newC].setPiece(piece, newR+2, newC); // update object on board to its new position
+					board[oldR][oldC].setNull();
+					}	
+					else if (m == "A"){
+					piece.setPosition(newR, newC-3); // update positions
+					// after moving, set the old position back to its original object
+					
+					board[newR][newC-3].setPiece(piece, newR, newC-3); // update object on board to its new position
+					board[oldR][oldC].setNull();
+					}
+					else if (m == "D"){
+						piece.setPosition(newR, newC+3); // update positions
+					// after moving, set the old position back to its original object
+					
+						board[newR][newC+3].setPiece(piece, newR, newC+3); // update object on board to its new position
+						board[oldR][oldC].setNull();
+					}
+				return true; // there's no piece on resulting tile
 			}
 		}
 		

@@ -101,13 +101,13 @@ public class Piece {
 	
 	public void crossLake (String m) {
 		if (m == "W")
-			this.setPosition(this.getRow() - 3, this.getColumn());
+			setPosition(r - 3, c);
 		else if (m == "S")
-			this.setPosition(this.getRow() + 3, this.getColumn());
+			setPosition(r + 3, c);
 		else if (m == "A")
-			this.setPosition(this.getRow(), this.getColumn() - 4);
+			setPosition(r , c- 4);
 		else if (m == "D")
-			this.setPosition(this.getRow(), this.getColumn() + 4);
+			setPosition(r, c + 4);
     }
 
 	public int getPlayerNumber(){
