@@ -1,7 +1,3 @@
-
-
-
-
 public class Piece {
 	protected String pieceName; // e.g., "R1", "C2", "LPD1"
 	protected int strength; // strength ranges from 1 to 8
@@ -101,6 +97,17 @@ public class Piece {
 	
 	public boolean canCross() {
         return this.pieceName.equals("LN") || this.pieceName.equals("T"); // checking if animal can cross lake tile : default false
+    }
+	
+	public void crossLake (String m) {
+		if (m == "W")
+			this.setPosition(this.getRow() - 3, this.getColumn());
+		else if (m == "S")
+			this.setPosition(this.getRow() + 3, this.getColumn());
+		else if (m == "A")
+			this.setPosition(this.getRow(), this.getColumn() - 4);
+		else if (m == "D")
+			this.setPosition(this.getRow(), this.getColumn() + 4);
     }
 
 	public int getPlayerNumber(){
