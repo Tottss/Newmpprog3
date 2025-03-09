@@ -130,151 +130,144 @@ public class Board { // initialize board and pieces
 		return board[r - 1][c - 1].getPiece();
 	}
 	
-	// public void movePiece (Piece piece, char m) { // updates position of piece
-		// int newR, newC;
-		// int r = piece.getRow(), c = piece.getColumn();
+	public boolean movePiece (Piece piece, char m) { // updates position of piece; returns value of isValidMove()
+		int oldR = piece.getRow(), oldC = piece.getColumn(), newR = oldR, newC = oldC;
+		boolean valid;
 		
-		// /*
-		// When a piece gets eaten:
-		// - setDead()
-		// - should not be visible on the board/gets replaced by the piece
+		/*
+		When a piece gets eaten:
+		- setDead()
+		- should not be visible on the board/gets replaced by the piece
 		
-		// When a piece goes to an opposing trap:
-		// - piece gets weakened
+		When a piece goes to an opposing trap:
+		- piece gets weakened
 		
-		// When a piece goes to an opposing home base:
-		// - game ends
-		// - determine which player wins
-		// */
+		When a piece goes to an opposing home base:
+		- game ends
+		- determine which player wins
 		
-		// if (board[r][c].getObject() instanceof piece) { // check if object in given pos is of Piece type
-			// if (board[r][c].getPiece().getAlive()) { // piece chosen SHOULD be alive
-				// if (m == 'W') {
-					// if (isValidMove(piece, m)) {
-						
-					// }
-				// }
-				
-				// else if (m == 'S') {
-					// if (isValidMove(piece, m)) {
-						// newR = piece.getRow()++;
-						// newC = piece.getColumn();
-					// }
-				// }
-				
-				// else if (m == 'A') {
-					// if (isValidMove(piece, m)) {
-						// newR = piece.getRow();
-						// newC = piece.getColumn()--;
-					// }
-				// }
-				
-				// else if (m == 'D') {
-					// if (isValidMove(piece, m)) {
-						// newR = piece.getRow();
-						// newC = piece.getColumn()++;
-					// }
-				// }
-			// }
-		// }
+		When a piece moves:
+		- DON'T FORGET TO CLEAR OLD POSITION (whatever was there, turn it into that terrain)
+		*/
 		
-		// piece.setPosition(newR, newC); // update positions
-	// }
+		if (!piece.getAlive()) // piece chosen SHOULD be alive
+			return false;
+			
+		if (!isValidMove(piece, m))
+			return false;
+		
+		if (board[newR][newC].getObject() == '~' && piece.canCross()) { // for lions and tigers only
+			piece.crossLake(m);
+			board[newR][newC].setPiece(piece, newR, newC);
+			// implement if there's an opposing piece once tiger/lion crosses
+		}
+		
+		switch (m) {
+			case 'W':
+				newR--;
+				break;
+			case 'S': 
+				newR++; 
+				break;
+			case 'A': 
+				newC-- ; 
+				break;
+			case 'D': 
+				newC++; 
+				break;
+			default: 
+				return false; // invalid move input
+		}
+		
+		Grid targetTile = board[newR][newC], originalTile = board[oldR][oldC].getObject();
+		
+		if (targetTile.getObject() instanceof Piece) { // capturing opposing piece
+			Piece targetPiece = targetTile.getPiece();
+			targetPiece.setDead();
+		}
+		
+		piece.setPosition(newR, newC); // update positions
+		// after moving, set the old position back to its original object
+		board[newR][newC].setPiece(piece); // update object on board to its new position
+		return isValidMove(piece, m);
+	}
 	
-	// public boolean isValidMove (Piece piece, char m) { // checks if piece move is valid
-		// /*
-		// Moves can be invalid if:
-		// - out of bounds (✓)
-		// - space is already occupied by piece unless the piece can eat the other piece (✓)
-		// - piece wishes to move to lake but can't swim (✓)
-		// - piece wishes to cross lake but there's a rat(✓)
-		// - piece wishes to move to its own home base (✓)
-		// - piece wishes to move to its own traps (✓)
-		// - piece wishes to move on a friendly piece's place (✓)
+	public boolean isValidMove (Piece piece, char m) { // checks if piece move is valid
+		/*
+		Moves can be invalid if:
+		- out of bounds (✓)
+		- space is already occupied by piece unless the piece can eat the other piece (✓)
+		- piece wishes to move to lake but can't swim (✓)
+		- piece wishes to cross lake but there's a rat(✓)
+		- piece wishes to move to its own home base (✓)
+		- piece wishes to move to its own traps (✓)
+		- piece wishes to move on a friendly piece's place (✓)
 		
-		// Other scenario moves that are valid:
-		// - piece goes to trap
-		// - piece leaves trap
-		// - piece goes to home base
-		// */
-		// int currR = piece.getRow(), currC = piece.getColumn();
-		// int newR = currR, newC = currC;
+		Other scenario moves that are valid:
+		- piece moves to an empty tile
+		- piece captures opposing piece (capture is valid)
+		- piece swims (rat)
+		- piece crosses lake (lion/tiger) and lake is clear of rats
+		- piece crosses lake (lion/tiger) and lake is clear of rats AND captures opposing piece
 		
-		// switch (m) {
-			// case 'W':
-				// newR--;
-				// break;
-			// case 'S': 
-				// newR++; 
-				// break;
-			// case 'A': 
-				// newC-- ; 
-				// break;
-			// case 'D': 
-				// newC++; 
-				// break;
-			// default: 
-				// return false; // invalid move input
-		// }
+		- piece goes to opposing trap (update piece status: weakened)
+		- piece leaves opposing trap (update piece status: not weak anymore)
+		- piece goes to opponent's home base
+		*/
+		int currR = piece.getRow(), currC = piece.getColumn();
+		int newR = currR, newC = currC;
 		
-		// if (!isWithinBounds(newR, newC)) // if out of bounds
-			// return false;
+		switch (m) {
+			case 'W':
+				newR--;
+				break;
+			case 'S': 
+				newR++; 
+				break;
+			case 'A': 
+				newC-- ; 
+				break;
+			case 'D': 
+				newC++; 
+				break;
+			default: 
+				return false; // invalid move input
+		}
 		
-		// Grid targetTile = board[newR][newC];
+		if (!isWithinBounds(newR, newC)) // if out of bounds
+			return false;
 		
-		// if (isRestrictedTile(piece, newR, newC)) // if targetTile is a friendly trap or home base
-			// return false;
+		Grid targetTile = board[newR][newC];
 		
-		// if (targetTile.getObject() == '~' && !piece.canSwim()) // if piece wants to go to lake but can't swim
-			// return false;
+		if (isRestrictedTile(piece, newR, newC)) // if targetTile is a friendly trap or home base
+			return false;
 		
-		// if (piece.canCross() && !isLakeRowEmpty(newR, newC)) // if piece can cross but lakeRow is occupied with rat
-			// return false; // todo: handle jumping over lake logic
+		if (targetTile.getObject() == '~' && !piece.canSwim()) // if piece wants to go to lake but can't swim
+			return false;
 		
-		// if (targetTile.getObject() instanceof Piece) {
-			// Piece targetPiece = targetTile.getPiece();
-			// if (piece.getNumber() == targetPiece.getNumber()) // ensures it can only capture/move to opposing pieces
-				// return false;
-			// if (!piece.isStronger(targetPiece))
-				// return false;
-		// }
+		// if piece can cross but lake row/col is occupied with rat
+		if (targetTile.getObject() == '~' && piece.canCross() && !isLakeRowEmpty(newR))
+			return false;
 		
+		if (targetTile.getObject() == '~' && piece.canCross() && !isLakeColEmpty(newR, currC))
+			return false;
 		
-		// if (m == 'W') {
-			// if (tempR - 1 >= 0) { // not out of bounds
-				// if (board[tempR--][tempC].getObject() == '~') { // identify what the tile is (e.g., piece, lake)
-					// piece.Rat.canSwim()
-					// /*
-					// 1st: piece cannot swim/cross lake
-					// 2nd: piece can swim/cross lake
-					// 3rd: piece can swim/cross lake but there's a rat
-					// */
-				// }
-				// else if (board[tempR][tempC].getObject() instanceof piece) {
-					// if (piece.isStronger(board[tempR][tempC].getObject()))
-						// return true; // if piece can capture opposing piece
-					// else
-						// return false; // if piece can't capture opposing piece
-				// }
-				// else if (board[currR][currC].getObject().getNumber() == 1 && tempR == 2 && tempC == 0 ||
-																			 // tempR == 3 && tempC == 0 ||
-																			 // tempR == 4 && tempC == 0 ||
-																			 // tempR == 3 && tempC == 1)
-					// return false; // prevents player 1 from going to its own traps and home base
-				// else if (board[currR][currC].getObject().getNumber() == 2 && tempR == 2 && tempC == 8 ||
-																			 // tempR == 3 && tempC == 8 ||
-																			 // tempR == 4 && tempC == 8 ||
-																			 // tempR == 3 && tempC == 7)
-					// return false; // prevents player 2 from going to its own traps and home base
-			// }
-		// }
-	// }
+		if (targetTile.getObject() instanceof Piece) {
+			Piece targetPiece = targetTile.getPiece();
+			if (piece.getNumber() == targetPiece.getNumber()) // ensures it can only capture/move to opposing pieces
+				return false;
+			if (!piece.isStronger(targetPiece))
+				return false;
+		}
+		return true;
+	}
 	
-	// public boolean isWithinBounds (int r, int c) {
-		// return r >= 0 && r <= 6 && c >= 0 && c <= 8;
-	// }
+	public boolean isWithinBounds (int r, int c) {
+		return r >= 0 && r <= 6 && c >= 0 && c <= 8;
+	}
 	
-	// public boolean isRestrictedTile (Piece piece, int r, int c) { // ensures players don't go to their traps/bases
+	public boolean isRestrictedTile (Piece piece, int r, int c) { // ensures players don't go to their traps/bases
+		// UNCOMENT ONCE TRAPS ARE BACK
 		// if (piece.getNumber() == 1) {
 			// return (r == 2 && c == 0) ||
 				   // (r == 3 && c == 0) ||
@@ -288,28 +281,45 @@ public class Board { // initialize board and pieces
 				   // (r == 4 && c == 8) ||
 				   // (r == 3 && c == 7);
 		// }
-		// return false;
-	// }
-	
-	// public boolean isLakeRowEmpty (int r, int c) {
-		// int i, j;
+		if (piece.getNumber() == 1)
+			return r == 3 && c == 0; // only home base
+		else if (piece.getNumber() == 2)
+			return r == 3 && c == 8;
 		
-		// for (i = c; i < 3; i++) {
-			// if (board[r][i].getPiece() != null) // if there's a piece (rat) in the lake tile)
-					// return false;
-		// }
-		// return true;
-	// }
+		return false;
+	}
 	
-	// public boolean isLakeColEmpty (int r, int c) {
-		// int i, j;
+	public boolean isLakeRowEmpty (int r) { // r = newR; checks if lakeRow is clear of rats
+		int i;
 		
-		// for (i = 1; i < 3; i++) {
-			// if (board[i][i].getPiece() != null) // if there's a piece (rat) in the lake tile)
-					// return false;
-		// }
-		// return true;
-	// }
+		for (i = 3; i <= 5; i++) {
+			if (board[r][i].getPiece() != null) // if there's a piece (rat) in the lake tile)
+					return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isLakeColEmpty (int r, int c) { // c = currC, r = newR
+		int i;
+		
+		if (r == 1 || r == 2) {
+			for (i = 1; i <= 2; i++) {
+				if (board[i][c].getPiece() != null) // if there's a piece (rat) in the lake tile)
+						return false;
+			}
+		}
+		
+		else if (r == 4 || r == 5) {
+			for (i = 4; i <= 5; i++) {
+				if (board[i][c].getPiece() != null) // if there's a piece (rat) in the lake tile)
+						return false;
+			}
+		}
+		
+		
+		return true;
+	}
 	
 	// public void trap (Piece piece) {
 		// piece can't go to its own traps?
