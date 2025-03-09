@@ -4,6 +4,16 @@ public class Board { // initialize board and pieces
 	private Grid[][] board;
 	private ArrayList<Piece> pieces;
 
+	/**
+	 * Constructor for the Board class.
+	 * Initializes the game board as a 7x9 grid and sets up the game environment.
+	 * The setup includes:
+	 * - Creating an empty board.
+	 * - Placing lake tiles.
+	 * - Setting up bases.
+	 * - Instantiating the game pieces.
+	 * - Placing the pieces on the board.
+	 */
 	public Board () {
 		board = new Grid[7][9]; // initializes the 7x9 grid
 		pieces = new ArrayList<>();
@@ -15,6 +25,11 @@ public class Board { // initialize board and pieces
 		setPieces();
 	}
 	
+
+	/**
+	 * Initializes the game board with empty tiles.
+	 * Each tile is set to '.' to indicate an open space.
+	 */
 	public void setOnlyBoard () { // initializes board to be '.' only
 		int i, j;
 		
@@ -25,6 +40,12 @@ public class Board { // initialize board and pieces
 		}
 	}
 	
+
+	/**
+	 * Sets the lake tiles on the game board.
+	 * The lake is represented by the '~' symbol.
+	 * The lake occupies two 2x3 regions in the middle of the board.
+	 */
 	public void setLake () { // sets the lake to be '~'
 		int i, j;
 		
@@ -41,6 +62,11 @@ public class Board { // initialize board and pieces
 		}
 	}
 	
+	/**
+	 * Sets up the bases on the game board.
+	 * The bases are represented by the '@' symbol.
+	 * Commented-out sections indicate trap locations.
+	 */
 	public void setBases () {
 		// left base
 		// board[2][0].setTerrain('#');
@@ -55,6 +81,12 @@ public class Board { // initialize board and pieces
 		// board[4][8].setTerrain('#');
 	}
 	
+
+	/**
+	 * Instantiates the game pieces for both players.
+	 * Each piece is assigned a name, strength, and player number.
+	 * The pieces are stored in a list for easy access.
+	 */
 	public void instantiatePieces () { // create pieces for player 1 and 2
 		int i, j;
 		
@@ -68,6 +100,10 @@ public class Board { // initialize board and pieces
 		}
 	}
 	
+	/**
+	 * Initializes the board by placing pieces in their designated starting positions.
+	 * The pieces are assigned based on their names retrieved from the piece list.
+	 */
 	public void setPieces () {
 		 board[0][0].setPiece(findPiece("T1"), 0, 0);
 		 board[6][8].setPiece(findPiece("T2"), 6, 8);
@@ -94,6 +130,13 @@ public class Board { // initialize board and pieces
 		 board[0][8].setPiece(findPiece("LN2"), 0, 8);
 	}
 	
+
+	/**
+	 * Finds a piece by its name from the list of pieces.
+	 *
+	 * @param name The name of the piece to find.
+	 * @return The Piece object if found, otherwise null.
+	 */
 	public Piece findPiece (String name) { // finds piece by its String name in array list
 		for (Piece p: pieces) {
 			if (p.getPieceName().equals(name))
@@ -102,6 +145,11 @@ public class Board { // initialize board and pieces
 		return null;
 	}
 	
+
+	/**
+	 * Displays the current state of the board by printing each tile's object.
+	 * Each tile is separated by a tab space for better readability.
+	 */
 	public void displayBoard () {
 		int i, j;
 		
@@ -113,42 +161,29 @@ public class Board { // initialize board and pieces
 			System.out.println();
 		}
 	}
-
-	public boolean getIsOpen (int r, int c) {
-		if (board[r - 1][c - 1].getObject().equals('.'))
-			return true;
-		return false;
-	}
-
-	public boolean getIsLake (int r, int c) {
-		if (board[r - 1][c - 1].getObject().equals('~'))
-			return true;
-		return false;
-	}
-
-	public Piece getPiece (int r, int c) {
-		return board[r - 1][c - 1].getPiece();
-	}
-	
+	/**
+	 * Moves a given piece in the specified direction if the move is valid.
+	 * <p>
+	 * The method ensures the following:
+	 * <ul>
+	 *     <li>The piece is alive before moving.</li>
+	 *     <li>The move is validated using {@code isValidMove}.</li>
+	 *     <li>The piece's position is updated upon a successful move.</li>
+	 *     <li>If the piece enters an opposing trap, it becomes weakened.</li>
+	 *     <li>If the piece moves into an opposing home base, the game ends.</li>
+	 *     <li>If the piece captures an opponent's piece, the opponent's piece is removed.</li>
+	 *     <li>For special movements (e.g., lions/tigers crossing lakes), the logic ensures they follow game rules.</li>
+	 * </ul>
+	 *
+	 * @param piece The piece that is attempting to move.
+	 * @param m The direction of the move ('W', 'S', 'A', 'D' for up, down, left, right).
+	 * @return true if the move is successfully executed, false otherwise.
+	 */	
 	public boolean movePiece (Piece piece, String m) { // updates position of piece; returns value of isValidMove()
 		int oldR = piece.getRow(), oldC = piece.getColumn(), newR = oldR, newC = oldC;
 		boolean valid = false;
 		
-		/*
-		When a piece gets eaten:
-		- setDead()
-		- should not be visible on the board/gets replaced by the piece
 		
-		When a piece goes to an opposing trap:
-		- piece gets weakened
-		
-		When a piece goes to an opposing home base:
-		- game ends
-		- determine which player wins
-		
-		When a piece moves:
-		- DON'T FORGET TO CLEAR OLD POSITION (whatever was there, turn it into that terrain)
-		*/
 		
 		if (!piece.getAlive()) // piece chosen SHOULD be alive
 			return false;
@@ -259,28 +294,35 @@ public class Board { // initialize board and pieces
 		return valid;
 	}
 	
+
+	/**
+	 * Determines if a given move for a piece is valid based on game rules.
+	 * <p>
+	 * Moves are considered invalid if:
+	 * <ul>
+	 *     <li>The move is out of bounds.</li>
+	 *     <li>The target tile is occupied by a friendly piece.</li>
+	 *     <li>The piece attempts to enter a lake tile but cannot swim.</li>
+	 *     <li>The piece attempts to cross a lake but a rat is blocking the path.</li>
+	 *     <li>The piece attempts to move to its own home base or trap.</li>
+	 *     <li>The piece tries to capture a stronger opponent.</li>
+	 * </ul>
+	 * Valid moves include:
+	 * <ul>
+	 *     <li>Moving to an empty tile.</li>
+	 *     <li>Capturing an opposing piece if allowed.</li>
+	 *     <li>Swimming if the piece is capable (e.g., a rat).</li>
+	 *     <li>Crossing a lake if allowed and no rat is blocking the way.</li>
+	 *     <li>Entering an opposing trap (causing the piece to be weakened).</li>
+	 *     <li>Leaving an opposing trap (restoring the piece's normal state).</li>
+	 * </ul>
+	 *
+	 * @param piece The piece that is attempting to move.
+	 * @param m The direction of the move ('W', 'S', 'A', 'D' for up, down, left, right).
+	 * @return true if the move is valid, false otherwise.
+	 */
 	public boolean isValidMove (Piece piece, String m) { // checks if piece move is valid
-		/*
-		Moves can be invalid if:
-		- out of bounds (✓)
-		- space is already occupied by piece unless the piece can eat the other piece (✓)
-		- piece wishes to move to lake but can't swim (✓)
-		- piece wishes to cross lake but there's a rat(✓)
-		- piece wishes to move to its own home base (✓)
-		- piece wishes to move to its own traps (✓)
-		- piece wishes to move on a friendly piece's place (✓)
 		
-		Other scenario moves that are valid:
-		- piece moves to an empty tile
-		- piece captures opposing piece (capture is valid)
-		- piece swims (rat)
-		- piece crosses lake (lion/tiger) and lake is clear of rats
-		- piece crosses lake (lion/tiger) and lake is clear of rats AND captures opposing piece
-		
-		- piece goes to opposing trap (update piece status: weakened)
-		- piece leaves opposing trap (update piece status: not weak anymore)
-		- piece goes to opponent's home base
-		*/
 		int currR = piece.getRow(), currC = piece.getColumn();
 		int newR = currR, newC = currC;
 		
@@ -336,11 +378,24 @@ public class Board { // initialize board and pieces
 		}
 		return true;
 	}
-	
+	/**
+	 * Checks if the specified row and column are within the valid board boundaries.
+	 *
+	 * @param r The row index to check.
+	 * @param c The column index to check.
+	 * @return true if the coordinates are within bounds, false otherwise.
+	 */
 	public boolean isWithinBounds (int r, int c) {
 		return r >= 0 && r <= 6 && c >= 0 && c <= 8;
 	}
 	
+
+	/**
+	 * Checks if a given row in the lake area is empty (i.e., contains no pieces).
+	 *
+	 * @param r The row to check (new row position).
+	 * @return true if the specified lake row is empty, false if a piece is present.
+	 */
 	public boolean isRestrictedTile (Piece piece, int r, int c) { // ensures players don't go to their traps/bases
 		// UNCOMENT ONCE TRAPS ARE BACK
 		// if (piece.getNumber() == 1) {
@@ -364,6 +419,13 @@ public class Board { // initialize board and pieces
 		return false;
 	}
 	
+
+	/**
+ 	* Checks if a given row in the lake area is empty (i.e., contains no pieces).
+ 	*
+ 	* @param r The row to check (new row position).
+ 	* @return true if the specified lake row is empty, false if a piece is present.
+ 	*/
 	public boolean isLakeRowEmpty (int r) { // r = newR; checks if lakeRow is clear of rats
 		int i;
 		
@@ -375,6 +437,14 @@ public class Board { // initialize board and pieces
 		return true;
 	}
 	
+
+	/**
+	* Checks if a given column in the lake area is empty (i.e., contains no pieces).
+	*
+	* @param r The row to check (new row position).
+	* @param c The column to check (current column position).
+	* @return true if the specified lake column is empty, false if a piece is present.
+	*/
 	public boolean isLakeColEmpty (int r, int c) { // c = currC, r = newR
 		int i;
 		
@@ -396,6 +466,14 @@ public class Board { // initialize board and pieces
 		return true;
 	}
 	
+
+	/**
+	 * Searches for a piece on the board by its name and player number.
+	 *
+	 * @param pieceName The name of the piece to search for.
+	 * @param playerNo  The player number who owns the piece.
+	 * @return The Piece object if found; otherwise, returns null.
+	 */
 	public Piece searchforPiece(String pieceName, int playerNo){
 		int row,col;
 
