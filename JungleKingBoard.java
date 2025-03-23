@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class JungleKingBoard extends JFrame {
@@ -9,6 +11,7 @@ public class JungleKingBoard extends JFrame {
     private JPanel boardPanel;
     private JButton[][] squares;
     private JButton selectedPiece = null;
+    private ArrayList<Piece> pieces;
 
     public JungleKingBoard() {
         setTitle("7x9 Chess Board");
@@ -80,8 +83,21 @@ public class JungleKingBoard extends JFrame {
         return -1;
     }
     
+    public void instantiatePieces () { // create pieces for player 1 and 2
+		int i, j;
+		
+		String[] pieceNames = {"R", "C", "D", "W", "LD", "T", "LN", "E"};
+		int[] strengths = {1, 2, 3, 4, 5, 6, 7, 8};
+		
+		for (i = 1; i <= 2; i++) { // twice for both players
+			for (j = 0; j < strengths.length; j++) {
+				pieces.add(new Piece(pieceNames[j] + i, strengths[j], i));
+			}
+		}
+	}
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            
             JungleKingBoard board = new JungleKingBoard();
             board.setVisible(true);
         });
