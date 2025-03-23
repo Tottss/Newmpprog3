@@ -21,8 +21,14 @@ public class JungleKingBoard extends JFrame {
         
         boardPanel = new JPanel(new GridLayout(ROWS, COLS));
         squares = new JButton[ROWS][COLS];
+		pieces = new ArrayList<>();
         initializeBoard();
-        
+		setLake();
+		setBases();
+		
+        instantiatePieces();
+		setPieces();
+		
         add(boardPanel, BorderLayout.CENTER);
     }
 
@@ -82,6 +88,36 @@ public class JungleKingBoard extends JFrame {
         }
         return -1;
     }
+	
+	public void setLake () { // sets the lake to be '~'
+		int i, j;
+		
+		for (i = 1; i < 3; i++) {
+			for (j = 3; j < 6; j++) {
+				squares[i][j].setIcon(loadPieceImage("lake"));
+			}
+		}
+		
+		for (i = 4; i < 6; i++) {
+			for (j = 3; j < 6; j++) {
+				squares[i][j].setIcon(loadPieceImage("lake"));
+			}
+		}
+	}
+	
+	public void setBases () {
+		// left base
+		squares[2][0].setIcon(loadPieceImage("trap"));
+		squares[3][0].setIcon(loadPieceImage("den-green"));
+		squares[3][1].setIcon(loadPieceImage("trap"));
+		squares[4][0].setIcon(loadPieceImage("trap"));
+		
+		// right base;
+		squares[2][8].setIcon(loadPieceImage("trap"));
+		squares[3][8].setIcon(loadPieceImage("den-blue"));
+		squares[3][7].setIcon(loadPieceImage("trap"));
+		squares[4][8].setIcon(loadPieceImage("trap"));
+	}
     
     public void instantiatePieces () { // create pieces for player 1 and 2
 		int i, j;
@@ -95,6 +131,40 @@ public class JungleKingBoard extends JFrame {
 			}
 		}
 	}
+	
+	public void setPieces () {
+		// todo: maybe implement a not so hard code approach
+		
+		squares[0][0].setIcon(loadPieceImage("tiger-blue"));
+		squares[6][8].setIcon(loadPieceImage("tiger-green"));
+		
+		squares[0][2].setIcon(loadPieceImage("elephant-blue"));
+		squares[6][6].setIcon(loadPieceImage("elephant-green"));
+		
+		squares[1][1].setIcon(loadPieceImage("cat-blue"));
+		squares[5][7].setIcon(loadPieceImage("cat-green"));
+		
+		squares[2][2].setIcon(loadPieceImage("wolf-blue"));
+		squares[4][6].setIcon(loadPieceImage("wolf-green"));
+		
+		squares[4][2].setIcon(loadPieceImage("leopard-blue"));
+		squares[2][6].setIcon(loadPieceImage("leopard-green"));
+		
+		squares[5][1].setIcon(loadPieceImage("dog-blue"));
+		squares[1][7].setIcon(loadPieceImage("dog-green"));
+		
+		squares[6][2].setIcon(loadPieceImage("rat-blue"));
+		squares[0][6].setIcon(loadPieceImage("rat-green"));
+		
+		squares[6][0].setIcon(loadPieceImage("lion-blue"));
+		squares[0][8].setIcon(loadPieceImage("lion-green"));
+	}
+	
+	private ImageIcon loadPieceImage (String fileName) {
+		String path = "img/" + fileName + ".png";
+		return new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+	}
+	
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             
