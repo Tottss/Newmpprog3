@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-public class JungleKingBoard extends JFrame {
+public class JungleKingBoard extends JPanel {
     private static final int ROWS = 7;
     private static final int COLS = 9;
     private JPanel boardPanel;
@@ -14,9 +14,9 @@ public class JungleKingBoard extends JFrame {
     private ArrayList<Piece> pieces;
 
     public JungleKingBoard() {
-        setTitle("7x9 Chess Board");
-        setSize(600, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // setTitle("7x9 Chess Board");
+        // setSize(600, 500);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         
         boardPanel = new JPanel(new GridLayout(ROWS, COLS));
@@ -165,11 +165,11 @@ public class JungleKingBoard extends JFrame {
 		return new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
 	}
 	
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+    // public static void main(String[] args) {
+        // SwingUtilities.invokeLater(() -> {
             
-            JungleKingBoard board = new JungleKingBoard();
-            board.setVisible(true);
-        });
-    }
+            // JungleKingBoard board = new JungleKingBoard();
+            // board.setVisible(true);
+        // });
+    // }
 }
