@@ -133,31 +133,17 @@ public class JungleKingBoard extends JPanel {
 	}
 	
 	public void setPieces () {
-		// todo: maybe implement a not so hard code approach
+		int i;
 		
-		squares[0][0].setIcon(loadPieceImage("tiger-blue"));
-		squares[6][8].setIcon(loadPieceImage("tiger-green"));
+		String[] pieceNames = {"rat", "cat", "dog", "wolf", "leopard", "tiger", "lion", "elephant"};
 		
-		squares[0][2].setIcon(loadPieceImage("elephant-blue"));
-		squares[6][6].setIcon(loadPieceImage("elephant-green"));
+		int[][] positionsP1 = {{6, 2}, {1, 1}, {5, 1}, {2, 2}, {4, 2}, {0, 0}, {6, 0}, {0, 2}};
+		int[][] positionsP2 = {{0, 6}, {5, 7}, {1, 7}, {4, 6}, {2, 6}, {6, 8}, {0, 8}, {6, 6}};
 		
-		squares[1][1].setIcon(loadPieceImage("cat-blue"));
-		squares[5][7].setIcon(loadPieceImage("cat-green"));
-		
-		squares[2][2].setIcon(loadPieceImage("wolf-blue"));
-		squares[4][6].setIcon(loadPieceImage("wolf-green"));
-		
-		squares[4][2].setIcon(loadPieceImage("leopard-blue"));
-		squares[2][6].setIcon(loadPieceImage("leopard-green"));
-		
-		squares[5][1].setIcon(loadPieceImage("dog-blue"));
-		squares[1][7].setIcon(loadPieceImage("dog-green"));
-		
-		squares[6][2].setIcon(loadPieceImage("rat-blue"));
-		squares[0][6].setIcon(loadPieceImage("rat-green"));
-		
-		squares[6][0].setIcon(loadPieceImage("lion-blue"));
-		squares[0][8].setIcon(loadPieceImage("lion-green"));
+		for (i = 0; i < positionsP1.length; i++) {
+			squares[positionsP1[i][0]][positionsP1[i][1]].setIcon(loadPieceImage(pieceNames[i] + "-blue"));
+			squares[positionsP2[i][0]][positionsP2[i][1]].setIcon(loadPieceImage(pieceNames[i] + "-green"));
+		}
 	}
 	
 	private ImageIcon loadPieceImage (String fileName) {
