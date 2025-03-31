@@ -3,7 +3,7 @@
 public class lion extends Piece {
     // constructor
     public lion(int playerNO){
-        super("LN"+playerNO, 7, playerNO);
+        super("lion-" + (playerNo == 1 ? "blue" : "green"), 7, playerNo);
     }
 
 	
