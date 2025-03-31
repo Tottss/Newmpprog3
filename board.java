@@ -69,16 +69,16 @@ public class Board { // initialize board and pieces
 	 */
 	public void setBases () {
 		// left base
-		// board[2][0].setTerrain('#');
+		board[2][0].setTerrain('#');
 		board[3][0].setTerrain('@');
-		// board[3][1].setTerrain('#');
-		// board[4][0].setTerrain('#');
+		board[3][1].setTerrain('#');
+		board[4][0].setTerrain('#');
 		
 		// right base;
-		// board[2][8].setTerrain('#');
+		board[2][8].setTerrain('#');
 		board[3][8].setTerrain('@');
-		// board[3][7].setTerrain('#');
-		// board[4][8].setTerrain('#');
+		board[3][7].setTerrain('#');
+		board[4][8].setTerrain('#');
 	}
 	
 
@@ -90,24 +90,20 @@ public class Board { // initialize board and pieces
 	public void instantiatePieces () { // create pieces for player 1 and 2
 		int i, j;
 		
-		String[] pieceNames = {"R", "C", "D", "W", "LD", "T", "LN", "E"};
-		int[] strengths = {1, 2, 3, 4, 5, 6, 7, 8};
+		String[] pieceNames = {"cat-", "dog-", "wolf-", "leopard-"};
+		int[] strengths = {2, 3, 4, 5};
 		
 		for (i = 1; i <= 2; i++) { // twice for both players
+			pieces.add(new rat(i));
+			pieces.add(new tiger(i));
+			pieces.add(new lion(i));
+			pieces.add(new elephant(i));
+			
 			for (j = 0; j < strengths.length; j++) {
-				if(j == 0){
-					pieces.add(new rat(i));
-				}
-				if(j == 5){
-					pieces.add(new tiger(i));
-				}
-				if(j == 6){
-					pieces.add(new lion(i));
-				}
-				if(j == 7){
-					pieces.add(new elephant(i));
-				}
-				pieces.add(new Piece(pieceNames[j] + i, strengths[j], i));
+				if (i == 1)
+					pieces.add(new Piece(pieceNames[j] + "blue", strengths[j], i));
+				else
+					pieces.add(new Piece(pieceNames[j] + "green", strengths[j], i));
 			}
 		}
 	}
@@ -117,29 +113,17 @@ public class Board { // initialize board and pieces
 	 * The pieces are assigned based on their names retrieved from the piece list.
 	 */
 	public void setPieces () {
-		 board[0][0].setPiece(findPiece("T1"), 0, 0);
-		 board[6][8].setPiece(findPiece("T2"), 6, 8);
+		int i;
 		
-		 board[0][2].setPiece(findPiece("E1"), 0, 2);
-		 board[6][6].setPiece(findPiece("E2"), 6, 6);
+		String[] pieceNames = {"rat", "cat", "dog", "wolf", "leopard", "tiger", "lion", "elephant"};
 		
-		board[1][1].setPiece(findPiece("C1"), 1, 1);
-		board[5][7].setPiece(findPiece("C2"), 5, 7);
+		int[][] positionsP1 = {{6, 2}, {1, 1}, {5, 1}, {2, 2}, {4, 2}, {0, 0}, {6, 0}, {0, 2}};
+		int[][] positionsP2 = {{0, 6}, {5, 7}, {1, 7}, {4, 6}, {2, 6}, {6, 8}, {0, 8}, {6, 6}};
 		
-		 board[2][2].setPiece(findPiece("W1"), 2, 2);
-		 board[4][6].setPiece(findPiece("W2"), 4, 6);
-		
-		 board[4][2].setPiece(findPiece("LD1"), 4, 2);
-		 board[2][6].setPiece(findPiece("LD2"), 2, 6);
-		
-		board[5][1].setPiece(findPiece("D1"), 5, 1);
-		board[1][7].setPiece(findPiece("D2"), 1, 7);
-		
-		 board[6][2].setPiece(findPiece("R1"), 6, 2);
-		 board[0][6].setPiece(findPiece("R2"), 0, 6);
-		
-		 board[6][0].setPiece(findPiece("LN1"), 6, 0);
-		 board[0][8].setPiece(findPiece("LN2"), 0, 8);
+		for (i = 0; i < positionsP1.length; i++) {
+			board[positionsP1[i][0]][positionsP1[i][1]].setPiece(findPiece(pieceNames[i] + "-blue"), positionsP1[i][0], positionsP1[i][1]);
+			board[positionsP2[i][0]][positionsP2[i][1]].setPiece(findPiece(pieceNames[i] + "-green"), positionsP2[i][0], positionsP2[i][1]);
+		}
 	}
 	
 
@@ -191,53 +175,53 @@ public class Board { // initialize board and pieces
 	 * @param m The direction of the move ('W', 'S', 'A', 'D' for up, down, left, right).
 	 * @return true if the move is successfully executed, false otherwise.
 	 */	
-	public boolean movePiece (Piece piece, String m) { // updates position of piece; returns value of isValidMove()
-		int oldR = piece.getRow(), oldC = piece.getColumn(), newR = oldR, newC = oldC;
+	public boolean movePiece (Piece piece, int newR, int newC) { // updates position of piece; returns value of isValidMove()
+		int oldR = piece.getRow(), oldC = piece.getColumn();
 		boolean valid = false;
-		
-		
 		
 		if (!piece.getAlive()) // piece chosen SHOULD be alive
 			return false;
 			
-		if (!isValidMove(piece, m)){
-			System.out.println("not valid");
+		if (!isValidMove(piece, newR, newC)){
+			// System.out.println("not valid");
 			return false;
 		}
-		else if(isValidMove(piece, m)){
-			valid = true;
-		}
-		switch (m) {
-			case "W":
-				newR--;
-				break;
-			case "S": 
-				newR++; 
-				break;
-			case "A": 
-				newC-- ; 
-				break;
-			case "D": 
-				newC++; 
-				break;
-			default: 
-				return false; // invalid move input
-		}
+		
+		valid = true;
+		// switch (m) {
+			// case "W":
+				// newR--;
+				// break;
+			// case "S": 
+				// newR++; 
+				// break;
+			// case "A": 
+				// newC-- ; 
+				// break;
+			// case "D": 
+				// newC++; 
+				// break;
+			// default: 
+				// return false; // invalid move input
+		// }
+		// NOTE: added one to each final newR newC since this got commented out
 		
 		Grid targetTile = board[newR][newC];
+		String m = determineMove(oldR, oldC, newR, newC);
 		
 		if (targetTile.getObject().equals('~') && piece.canCross()) { // for lions and tigers only
 			//piece.crossLake(m); // note: this already updates the piece's position
 			//System.out.println(piece.getRow() + " "+ piece.getColumn());
 			
-			if (m == "W")
-				targetTile = board[newR-2][newC];
-			else if (m == "S")
-				targetTile = board[newR+2][newC];
-			else if (m == "A")
-				targetTile = board[newR][newC-3];
-			else if (m == "D")
-				targetTile = board[newR][newC+3];
+			if ("W".equals(m))
+				targetTile = board[newR - 3][newC];
+			else if ("S".equals(m))
+				targetTile = board[newR + 3][newC];
+			else if ("A".equals(m))
+				targetTile = board[newR][newC - 4];
+			else if ("D".equals(m))
+				targetTile = board[newR][newC + 4];
+			
 			if (targetTile.getObject() instanceof Piece) { // if resulting tile contains an opposing piece
 				Piece targetPiece = targetTile.getPiece();
 				
@@ -253,35 +237,35 @@ public class Board { // initialize board and pieces
 				}
 			}
 			
-			else{
+			else {
 				if ("W".equals(m)){
-					piece.setPosition(newR-2, newC); 
+					piece.setPosition(newR - 3, newC); 
 					
 					
-					board[newR-2][newC].setPiece(piece, newR-2, newC); 
+					board[newR - 3][newC].setPiece(piece, newR - 3, newC); 
 					board[oldR][oldC].setNull();
-					}
-					else if ("S".equals(m)){
-					piece.setPosition(newR+2, newC); // update positions
+				}
+				else if ("S".equals(m)){
+					piece.setPosition(newR + 3, newC); // update positions
 					// after moving, set the old position back to its original object
 					
-					board[newR+2][newC].setPiece(piece, newR+2, newC); // update object on board to its new position
+					board[newR + 3][newC].setPiece(piece, newR + 3, newC); // update object on board to its new position
 					board[oldR][oldC].setNull();
-					}	
-					else if (m == "A"){
-					piece.setPosition(newR, newC-3); // update positions
+				}	
+				else if ("A".equals(m)){
+					piece.setPosition(newR, newC - 4); // update positions
 					// after moving, set the old position back to its original object
 					
-					board[newR][newC-3].setPiece(piece, newR, newC-3); // update object on board to its new position
+					board[newR][newC - 4].setPiece(piece, newR, newC - 4); // update object on board to its new position
 					board[oldR][oldC].setNull();
-					}
-					else if (m == "D"){
-						piece.setPosition(newR, newC+3); // update positions
+				}
+				else if ("D".equals(m)){
+					piece.setPosition(newR, newC + 4); // update positions
 					// after moving, set the old position back to its original object
-					
-						board[newR][newC+3].setPiece(piece, newR, newC+3); // update object on board to its new position
-						board[oldR][oldC].setNull();
-					}
+				
+					board[newR][newC + 4].setPiece(piece, newR, newC + 4); // update object on board to its new position
+					board[oldR][oldC].setNull();
+				}
 				return true; // there's no piece on resulting tile
 			}
 		}
@@ -300,10 +284,27 @@ public class Board { // initialize board and pieces
 		piece.setPosition(newR, newC); // update positions
 		// after moving, set the old position back to its original object
 		
+		System.out.println("Moving piece from (" + oldR + "," + oldC + ") to (" + newR + "," + newC + ")");
+		
 		board[newR][newC].setPiece(piece, newR, newC); // update object on board to its new position
 		board[oldR][oldC].setNull();
 		
 		return valid;
+	}
+	
+	public String determineMove (int oldR, int oldC, int newR, int newC) {
+		// determines the move based on oldR, oldC and newR, newC (for regular movement and crossing lakes)
+		
+		if ((oldR - newR == 1 && oldC == newC) || (oldR - newR == 3 && oldC == newC))
+			return "W";
+		else if ((oldC - newC == 1 && oldR == newR) || (oldC - newC == 4 && oldR == newR))
+			return "A";
+		else if ((newR - oldR == 1 && oldC == newC) || (newR - oldR == 3 && oldC == newC))
+			return "S";
+		else if ((newC - oldC == 1 && oldR == newR) || (newC - oldC == 4 && oldR == newR))
+			return "D";
+		
+		return "null";
 	}
 	
 
@@ -333,29 +334,31 @@ public class Board { // initialize board and pieces
 	 * @param m The direction of the move ('W', 'S', 'A', 'D' for up, down, left, right).
 	 * @return true if the move is valid, false otherwise.
 	 */
-	public boolean isValidMove (Piece piece, String m) { // checks if piece move is valid
+	public boolean isValidMove (Piece piece, int newR, int newC) { // checks if piece move is valid
 		
 		int currR = piece.getRow(), currC = piece.getColumn();
-		int newR = currR, newC = currC;
 		
-		switch (m) {
-			case "W":
-				newR--;
-				break;
-			case "S": 
-				newR++; 
-				break;
-			case "A": 
-				newC-- ; 
-				break;
-			case "D": 
-				newC++; 
-				break;
-			default: 
-				return false; // invalid move input
-		}
+		// switch (m) {
+			// case "W":
+				// newR--;
+				// break;
+			// case "S": 
+				// newR++; 
+				// break;
+			// case "A": 
+				// newC-- ; 
+				// break;
+			// case "D": 
+				// newC++; 
+				// break;
+			// default: 
+				// return false; // invalid move input
+		// }
 		
 		if (!isWithinBounds(newR, newC)) // if out of bounds
+			return false;
+			
+		if (determineMove(currR, currC, newR, newC).equals("null")) // if move is not single-tile, or crossing lake
 			return false;
 		
 		Grid targetTile = board[newR][newC];
@@ -409,20 +412,19 @@ public class Board { // initialize board and pieces
 	 * @return true if the specified lake row is empty, false if a piece is present.
 	 */
 	public boolean isRestrictedTile (Piece piece, int r, int c) { // ensures players don't go to their traps/bases
-		// UNCOMENT ONCE TRAPS ARE BACK
-		// if (piece.getNumber() == 1) {
-			// return (r == 2 && c == 0) ||
-				   // (r == 3 && c == 0) ||
-				   // (r == 4 && c == 0) ||
-				   // (r == 3 && c == 1);
-		// }
+		if (piece.getNumber() == 1) {
+			return (r == 2 && c == 0) ||
+				   (r == 3 && c == 0) ||
+				   (r == 4 && c == 0) ||
+				   (r == 3 && c == 1);
+		}
 		
-		// else if (piece.getNumber() == 2) {
-			// return (r == 2 && c == 8) ||
-				   // (r == 3 && c == 8) ||
-				   // (r == 4 && c == 8) ||
-				   // (r == 3 && c == 7);
-		// }
+		else if (piece.getNumber() == 2) {
+			return (r == 2 && c == 8) ||
+				   (r == 3 && c == 8) ||
+				   (r == 4 && c == 8) ||
+				   (r == 3 && c == 7);
+		}
 		if (piece.getNumber() == 1)
 			return r == 3 && c == 0; // only home base
 		else if (piece.getNumber() == 2)
@@ -502,6 +504,12 @@ public class Board { // initialize board and pieces
 			}
 		}
 		return null;
+	}
+	
+	public Object getGrid (int row, int col) {
+		if (board[row][col].getPiece() != null)
+			return board[row][col].getPiece();
+		return board[row][col].getTerrain();
 	}
 	
 	// public void trap (Piece piece) {
