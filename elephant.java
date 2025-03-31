@@ -4,7 +4,7 @@ public class elephant extends Piece {
 
     // constructor
     public elephant(int playerNo) {
-        super("E"+playerNo, 8,playerNo);
+        super("elephant-" + (playerNo == 1 ? "blue" : "green"), 8,playerNo);
     }
 
     // checks if next grid is crossable
