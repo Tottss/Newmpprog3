@@ -81,9 +81,9 @@ public class JungleKingBoard extends JPanel {
 		String path = "img/" + fileName + ".png";
 		return new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
 	}
-
-    private class PieceMoveListener implements ActionListener {
-        private int row, col, selectedPieceR, selectedPieceC;
+	
+	private class PieceMoveListener implements ActionListener {
+        private int row, col, selectedPieceR = -1, selectedPieceC = -1;
 
         public PieceMoveListener(int row, int col) { // initializes clicked row and column
             this.row = row;
@@ -92,45 +92,39 @@ public class JungleKingBoard extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JButton clickedButton = squares[row][col];
-			Piece piece;
+			if (selectedPiece == null) {
+				// Select piece if it belongs to current player
+				Object gridObj = board.getGrid(row, col);
+				if (gridObj instanceof Piece) {
+					selectedPiece = squares[row][col];
+					selectedPiece.setBackground(Color.YELLOW); // Highlight selected
+				}
+			} 
 			
-            if (selectedPiece == null && clickedButton.getIcon() != null) { // if there's no selected piece b4
+			else {
+				// Attempt to move
+				JButton target = (JButton) e.getSource();
+				int newRow = row;
+				int newCol = col;
 				
-				if (!(board.getGrid(row, col) instanceof Piece)) // if tile chosen is not a piece
-					return;
+				// Get the selected piece from the board
+				Piece piece = (Piece) board.getGrid(
+					selectedPiece.getY() / selectedPiece.getHeight(),
+					selectedPiece.getX() / selectedPiece.getWidth()
+				);
 				
-                // select a piece
-                selectedPiece = clickedButton;
-                selectedPiece.setBackground(Color.YELLOW);
-				selectedPieceR = row;
-				selectedPieceC = col;
-            }
-			else if (selectedPiece != null && clickedButton != selectedPiece) { // attemping to move the piece
-				
-				if (board == null) // board must be initialized
-					return;
-				
-				if (!(board.getGrid(selectedPieceR, selectedPieceC) instanceof Piece)) { // if not a piece
-					resetSelection();
-					return;
+				if (piece != null && board.movePiece(piece, newRow, newCol)) {
+					// Update GUI
+					squares[newRow][newCol].setIcon(selectedPiece.getIcon());
+					squares[newRow][newCol].setBackground(target.getBackground());
+					selectedPiece.setIcon(null);
+					selectedPiece.setBackground((selectedPiece.getY() + selectedPiece.getX()) % 2 == 0 
+						? Color.LIGHT_GRAY : Color.DARK_GRAY);
+					updateBoardDisplay();
 				}
-				
-				// if is a piece
-				piece = (Piece)board.getGrid(selectedPieceR, selectedPieceC);
-				
-				if (piece != null && board.isValidMove(piece, row, col)) { // move the piece
-					
-					if (board.movePiece(piece, row, col)) {
-						clickedButton.setIcon(selectedPiece.getIcon());
-						selectedPiece.setIcon(null);
-						clickedButton.revalidate();
-						clickedButton.repaint();
-					}
-				}
-                resetSelection();
-            }
-        }
+				selectedPiece = null; // Reset selection
+			}
+		}
 		
 		private Color getOriginalColor (int row, int col) {
 			if ((row + col) % 2 == 0)
@@ -140,11 +134,43 @@ public class JungleKingBoard extends JPanel {
 		
 		private void resetSelection () {
 			if (selectedPiece != null)
-				selectedPiece.setBackground(getOriginalColor(row, col));
+				selectedPiece.setBackground(getOriginalColor(selectedPieceR, selectedPieceC));
 			
 			selectedPiece = null;
-			selectedPieceR = -1;
-			selectedPieceC = -1;
+			
+			if (selectedPieceR >= 0 && selectedPieceC >= 0) {
+				selectedPieceR = -1;
+				selectedPieceC = -1;
+			}
+		}
+		
+		private void updateBoardDisplay () {
+			Piece p;
+			char terrain;
+			
+			for (int r = 0; r < ROWS; r++) {
+				for (int c = 0; c < COLS; c++) {
+					squares[r][c].setIcon(null); // clear current icon
+					
+					
+					if (board.getGrid(r, c) instanceof Character) { // set terrain
+						terrain = (char)board.getGrid(r, c);
+						if (terrain == '~')
+							squares[r][c].setIcon(loadPieceImage("lake"));
+						else if (terrain == '#')
+							squares[r][c].setIcon(loadPieceImage("trap"));
+					}
+					
+					else if (board.getGrid(r, c) instanceof Piece) { // set pieces
+						p = (Piece)board.getGrid(r, c);
+						squares[r][c].setIcon(loadPieceImage(p.getPieceName()));
+					}
+				}
+			}
+			
+			// reset dens in case modified
+			squares[3][0].setIcon(loadPieceImage("den-green"));
+			squares[3][8].setIcon(loadPieceImage("den-blue"));
 		}
     }
 
