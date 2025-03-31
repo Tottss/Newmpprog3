@@ -3,14 +3,34 @@
 public class elephant extends Piece {
 
     // constructor
-    public elephant() {
-        super('E', 8);
+    public elephant(int playerNo) {
+        super("E"+playerNo, 8,playerNo);
     }
 
     // checks if next grid is crossable
     @Override
-    public boolean canKill(Piece target) {
-        return target.strength <= this.strength || !(target instanceof rat);
+    public boolean isStronger (Piece piece) {
+        if (piece instanceof rat){
+            return false;
+        }
+        return strength >= piece.getStrength();
     }
 
+    @Override
+    public boolean capture (Piece piece) { // only captures, doesn't update position
+		// return true if piece gets captured, false if piece doesn't get captured
+		
+		if (piece.getWeak()) {
+			piece.setDead();
+			return true;
+		}
+		
+		else
+			if (strength >= piece.getStrength() && !(piece instanceof rat)) {
+				piece.setDead();
+				return true;
+			}
+			else
+				return false;
+	}
 }

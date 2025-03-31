@@ -95,6 +95,18 @@ public class Board { // initialize board and pieces
 		
 		for (i = 1; i <= 2; i++) { // twice for both players
 			for (j = 0; j < strengths.length; j++) {
+				if(j == 0){
+					pieces.add(new rat(i));
+				}
+				if(j == 5){
+					pieces.add(new tiger(i));
+				}
+				if(j == 6){
+					pieces.add(new lion(i));
+				}
+				if(j == 7){
+					pieces.add(new elephant(i));
+				}
 				pieces.add(new Piece(pieceNames[j] + i, strengths[j], i));
 			}
 		}
