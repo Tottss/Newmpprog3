@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.*;
 
 public class JungleKingBoard extends JPanel {
@@ -11,7 +10,7 @@ public class JungleKingBoard extends JPanel {
     private JPanel boardPanel;
     private JButton[][] squares;
     private JButton selectedPiece = null;
-	private Board board;
+	private board board;
     private ArrayList<Piece> pieces;
 
     public JungleKingBoard() {
@@ -23,7 +22,7 @@ public class JungleKingBoard extends JPanel {
         boardPanel = new JPanel(new GridLayout(ROWS, COLS));
         squares = new JButton[ROWS][COLS];
 		pieces = new ArrayList<>();
-		board = new Board();
+		board = new board();
 		
         initializeBoard();
 		
@@ -105,17 +104,23 @@ public class JungleKingBoard extends JPanel {
                 selectedPiece.setBackground(Color.YELLOW);
 				selectedPieceR = row;
 				selectedPieceC = col;
+                System.err.println("WORKS");
             }
 			else if (selectedPiece != null && clickedButton != selectedPiece) { // attemping to move the piece
 				
 				if (board == null) // board must be initialized
 					return;
-				
+                else {
+                    System.err.println("board is not null");
+                }
 				if (!(board.getGrid(selectedPieceR, selectedPieceC) instanceof Piece)) { // if not a piece
 					resetSelection();
+                    System.err.println("WORKS1");
 					return;
 				}
-				
+				else {
+                    System.err.println("is a piece");
+                }
 				// if is a piece
 				piece = (Piece)board.getGrid(selectedPieceR, selectedPieceC);
 				
@@ -126,8 +131,12 @@ public class JungleKingBoard extends JPanel {
 						selectedPiece.setIcon(null);
 						clickedButton.revalidate();
 						clickedButton.repaint();
+                        System.err.println("WORKS2");
 					}
 				}
+                else if (!(board.isValidMove(piece, row, col))){
+                    System.err.println("isvalid move is problem");
+                }
                 resetSelection();
             }
         }

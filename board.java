@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Board { // initialize board and pieces
+public class board { // initialize board and pieces
 	private Grid[][] board;
 	private ArrayList<Piece> pieces;
 
@@ -14,7 +14,7 @@ public class Board { // initialize board and pieces
 	 * - Instantiating the game pieces.
 	 * - Placing the pieces on the board.
 	 */
-	public Board () {
+	public board () {
 		board = new Grid[7][9]; // initializes the 7x9 grid
 		pieces = new ArrayList<>();
 		
