@@ -1,7 +1,7 @@
 public class tiger extends Piece {
     // constructor
-    public tiger(int playerNO){
-        super("L"+playerNO, 6, playerNO);
+    public tiger(int playerNo){
+        super("tiger-" + (playerNo == 1 ? "blue" : "green"), 6, playerNo);
     }
 
 	
