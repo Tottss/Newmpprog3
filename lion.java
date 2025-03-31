@@ -2,7 +2,7 @@
 
 public class lion extends Piece {
     // constructor
-    public lion(int playerNO){
+    public lion(int playerNo){
         super("lion-" + (playerNo == 1 ? "blue" : "green"), 7, playerNo);
     }
 
