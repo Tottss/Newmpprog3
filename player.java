@@ -1,4 +1,4 @@
-package mpprog3;
+package newmpprog3;
 
 public class player {
     private int playerColor;

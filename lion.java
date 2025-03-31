@@ -1,9 +1,8 @@
-package mpprog3;
 
 public class lion extends Piece {
     // constructor
-    public lion(){
-        super('L', 7);
+    public lion(int playerNO){
+        super('L', 7, playerNO);
     }
 
     public void crossLake (char m) {

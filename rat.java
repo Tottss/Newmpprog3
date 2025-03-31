@@ -1,4 +1,4 @@
-package mpprog3;
+package Newmpprog3;
 
 public class rat extends Piece {
     // constructor

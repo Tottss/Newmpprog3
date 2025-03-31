@@ -129,10 +129,7 @@ public class Piece {
 	public boolean isStronger (Piece piece) {
 		if (piece.getWeak())
 			return true;
-		else if (strength >= piece.getStrength())
-			return true;
-		else
-			return false;
+		else return strength >= piece.getStrength();
 	}
 
 	/**
@@ -173,7 +170,8 @@ public class Piece {
 	 */
 	public boolean canSwim(){
             // checking if animal can stay on lake tile :default false
-            return this.pieceName.equals("R1") || this.pieceName.equals("R2");
+            //return this.pieceName.equals("R1") || this.pieceName.equals("R2");
+			return false;
 	}
 	
 	/**
@@ -182,7 +180,9 @@ public class Piece {
 	 * @return true if the piece can cross a lake, false otherwise.
 	 */
 	public boolean canCross() {
-        return this.pieceName.equals("LN1") || this.pieceName.equals("T1") || this.pieceName.equals("LN2") || this.pieceName.equals("T2"); // checking if animal can cross lake tile : default false
+        
+		//return this.pieceName.equals("LN1") || this.pieceName.equals("T1") || this.pieceName.equals("LN2") || this.pieceName.equals("T2"); // checking if animal can cross lake tile : default false
+		return false;
     }
 	
 	/**
