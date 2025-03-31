@@ -73,8 +73,8 @@ public class JungleKingBoard extends JPanel {
         }
 		
 		// manually setup dens
-		squares[3][0].setIcon(loadPieceImage("den-green"));
-		squares[3][8].setIcon(loadPieceImage("den-blue"));
+		squares[3][0].setIcon(loadPieceImage("den-blue"));
+		squares[3][8].setIcon(loadPieceImage("den-green"));
     }
 	
 	private ImageIcon loadPieceImage (String fileName) {
@@ -169,8 +169,8 @@ public class JungleKingBoard extends JPanel {
 			}
 			
 			// reset dens in case modified
-			squares[3][0].setIcon(loadPieceImage("den-green"));
-			squares[3][8].setIcon(loadPieceImage("den-blue"));
+			squares[3][0].setIcon(loadPieceImage("den-blue"));
+			squares[3][8].setIcon(loadPieceImage("den-green"));
 		}
     }
 
