@@ -4,7 +4,7 @@ public class rat extends Piece {
     // constructor
     
     public rat(int playerNo){
-        super("R"+playerNo, 1, playerNo);
+        super("rat-" + (playerNo == 1 ? "blue" : "green"), 1, playerNo);
     }
 
     // checks if next grid is crossable
