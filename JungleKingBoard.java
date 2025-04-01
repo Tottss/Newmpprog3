@@ -11,10 +11,9 @@ public class JungleKingBoard extends JPanel {
     private board board;
     private ArrayList<Piece> pieces;
     public Piece selectedPiece = null;
-    private int currentPlayer = -1; // 1 or 2
-    private JLabel turnLabel; // To display current turn
+    private int currentPlayer = -1;
+    private JLabel turnLabel;
     
-    // Images storage
     private Image lakeImage, trapImage, denBlueImage, denGreenImage;
     private java.util.Map<String, Image> pieceImages = new java.util.HashMap<>();
 
@@ -24,8 +23,7 @@ public class JungleKingBoard extends JPanel {
         board = new board();
 		currentPlayer = turn;
         
-        // Add turn indicator at the top
-        turnLabel = new JLabel("Player "+turn+"s Turn", JLabel.CENTER);
+        turnLabel = new JLabel("Player " + turn + "s Turn", JLabel.CENTER); // turn indicator
         turnLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(turnLabel, BorderLayout.NORTH);
         
@@ -42,136 +40,133 @@ public class JungleKingBoard extends JPanel {
         });
     }
 
-    private void loadImages() {
+    private void loadImages () {
         lakeImage = loadImage("lake");
         trapImage = loadImage("trap");
         denBlueImage = loadImage("den-blue");
         denGreenImage = loadImage("den-green");
         String key = null;
-        // Preload all piece images you expect to use
-        // Add more as needed
-        String[] pieceTypes = {"rat", "cat", "dog", "wolf", "leopard", 
-                              "tiger", "lion", "elephant"};
+        
+        String[] pieceTypes = {"rat", "cat", "dog", "wolf", "leopard", "tiger", "lion", "elephant"};
         for (String type : pieceTypes) {
             for (int player = 1; player <= 2; player++) {
-                if(player == 1)
+                if (player == 1)
 					key = type + "-blue";
-				if(player == 2)
+				if (player == 2)
 					key = type + "-green";
                 pieceImages.put(key, loadImage(key));
             }
         }
     }
     
-    private Image loadImage(String fileName) {
+    private Image loadImage (String fileName) {
         String path = "img/" + fileName + ".png";
         ImageIcon icon = new ImageIcon(path);
         return icon.getImage().getScaledInstance(TILE_SIZE, TILE_SIZE, Image.SCALE_SMOOTH);
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent (Graphics g) {
         super.paintComponent(g);
         
-        // Draw the board background
-        drawBoardBackground(g);
+        drawBoardBackground(g); // background
         
-        // Draw special tiles (lakes, traps, dens)
-        drawSpecialTiles(g);
+        drawSpecialTiles(g); // lake, traps, dens
         
-        // Draw pieces
-        drawPieces(g);
+        drawPieces(g); // pieces
         
-        // Draw selection highlight if needed
-        if (selectedPiece != null) {
+        if (selectedPiece != null) { // highlight
             drawSelection(g, selectedPiece);
         }
     }
     
-    private void drawBoardBackground(Graphics g) {
+    private void drawBoardBackground (Graphics g) {
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
-                // Alternate colors for checkerboard pattern
-                if ((row + col) % 2 == 0) {
+                
+                if ((row + col) % 2 == 0) // alternate colors
                     g.setColor(Color.LIGHT_GRAY);
-                } else {
+                
+				else
                     g.setColor(Color.DARK_GRAY);
-                }
+				
                 g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
     }
     
-    private void drawSpecialTiles(Graphics g) {
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                Object cell = board.getGrid(row, col);
+    private void drawSpecialTiles (Graphics g) {
+		int row, col;
+		Object cell;
+		
+        for (row = 0; row < ROWS; row++) {
+            for (col = 0; col < COLS; col++) {
+                cell = board.getGrid(row, col);
                 
                 if (cell instanceof Character) {
                     char terrain = (Character) cell;
-                    if (terrain == '~') {
+                    if (terrain == '~') // lake
                         g.drawImage(lakeImage, col * TILE_SIZE, row * TILE_SIZE, this);
-                    } else if (terrain == '#') {
+                    
+					else if (terrain == '#') // traps
                         g.drawImage(trapImage, col * TILE_SIZE, row * TILE_SIZE, this);
-                    }
+                    
                 }
             }
         }
-        
-        // Draw dens
+        // dens
         g.drawImage(denBlueImage, 0 * TILE_SIZE, 3 * TILE_SIZE, this);
         g.drawImage(denGreenImage, 8 * TILE_SIZE, 3 * TILE_SIZE, this);
     }
     
-    private void drawPieces(Graphics g) {
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                Object cell = board.getGrid(row, col);
+    private void drawPieces (Graphics g) {
+		int row, col;
+		Object cell;
+		Piece piece;
+		Image pieceImage;
+		
+        for (row = 0; row < ROWS; row++) {
+            for (col = 0; col < COLS; col++) {
+                cell = board.getGrid(row, col);
                 if (cell instanceof Piece) {
-                    Piece piece = (Piece) cell;
-                    Image pieceImage = pieceImages.get(piece.getPieceName().toLowerCase());
-                    if (pieceImage != null) {
+                    piece = (Piece) cell;
+                    pieceImage = pieceImages.get(piece.getPieceName().toLowerCase());
+					
+                    if (pieceImage != null)
                         g.drawImage(pieceImage, col * TILE_SIZE, row * TILE_SIZE, this);
-                    }
                 }
             }
         }
     }
     
-    private void drawSelection(Graphics g, Piece piece) {
+    private void drawSelection (Graphics g, Piece piece) {
         g.setColor(Color.YELLOW);
-        g.drawRect(piece.getColumn() * TILE_SIZE, piece.getRow() * TILE_SIZE, 
-                  TILE_SIZE, TILE_SIZE);
-        g.drawRect(piece.getColumn() * TILE_SIZE + 1, piece.getRow() * TILE_SIZE + 1, 
-                  TILE_SIZE - 2, TILE_SIZE - 2);
+        g.drawRect(piece.getColumn() * TILE_SIZE, piece.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        g.drawRect(piece.getColumn() * TILE_SIZE + 1, piece.getRow() * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
     }
     
-    private void handleTileClick(int row, int col) {
+    private void handleTileClick (int row, int col) {
 		Object cell = board.getGrid(row, col);
+		Piece clickedPiece;
 		
-		// If clicking on a piece
-		if (cell instanceof Piece) {
-			Piece clickedPiece = (Piece) cell;
+		if (cell instanceof Piece) { // if clicking on a piece
+			clickedPiece = (Piece) cell;
 			
-			// Only allow selecting own pieces
-			if (selectedPiece == null) {
-				if (clickedPiece.getPlayerNumber() == currentPlayer) {
+			if (selectedPiece == null) { // only allow selecting own pieces
+				if (clickedPiece.getPlayerNumber() == currentPlayer)
 					selectedPiece = clickedPiece;
-				}
 			} 
 			else {
 				
-				if (clickedPiece == selectedPiece) // deselect by clicking on the same selected piece
+				if (clickedPiece == selectedPiece) // deselect by clicking on the same piece
 					selectedPiece = null;
-				// Check if adjacent (distance of exactly 1)
-				else if (isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
-					// Attempt capture/move
-					if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) {
-						// Clicked on own piece - change selection
-						selectedPiece = clickedPiece;
-					} 
-					else {
-						// Attempt capture
+				
+				else if (isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) { // check if adjacent
+					
+					if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) // attempt capture/move
+						selectedPiece = clickedPiece; // clicked on own piece; change selection
+					
+					else { // attempt capture
 						if (selectedPiece.capture(clickedPiece) && board.isValidMove(selectedPiece, row, col)) {
 							board.movePiece(selectedPiece, row, col);
 							board.trapped(selectedPiece);
@@ -182,7 +177,7 @@ public class JungleKingBoard extends JPanel {
 				}
 			}
 		} 
-		else { // Clicking on empty space
+		else { // clicking on empty space
 			if (selectedPiece != null && isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
 				if (board.isValidMove(selectedPiece, row, col)) {
 					board.movePiece(selectedPiece, row, col);
@@ -197,12 +192,11 @@ public class JungleKingBoard extends JPanel {
 		repaint();
 	}
 	
-	// Helper method to check if two positions are adjacent (distance of 1)
-	private boolean isAdjacent(int row1, int col1, int row2, int col2) {
+	private boolean isAdjacent(int row1, int col1, int row2, int col2) { // check if two positions are adjacent
 		int rowDiff = Math.abs(row1 - row2);
 		int colDiff = Math.abs(col1 - col2);
 		
-		// Either same row and adjacent column, or same column and adjacent row
+		// either same row, adjacent column, or same column, adjacent row
 		return (rowDiff == 0 && colDiff == 1) || (rowDiff == 1 && colDiff == 0);
 	}
     
@@ -212,10 +206,10 @@ public class JungleKingBoard extends JPanel {
             JOptionPane.showMessageDialog(this, "Player " + currentPlayer + " wins!");
             resetGame();
         }
-        currentPlayer = (currentPlayer == 1) ? 2 : 1; // Switch player
+        currentPlayer = (currentPlayer == 1) ? 2 : 1; // switch player
         updateTurnLabel();
         
-        // Check for win condition
+        // check for win condition
         
     }
     
@@ -225,21 +219,20 @@ public class JungleKingBoard extends JPanel {
     }
     
     private boolean checkWinCondition() {
-        // Check if any player reached the opponent's den
-        Piece blueDenPiece = getPiece(3, 0); // Blue den position
-        Piece greenDenPiece = getPiece(3, 8); // Green den position
+        // check if any player reached the opponent's den
+        Piece blueDenPiece = getPiece(3, 0);
+        Piece greenDenPiece = getPiece(3, 8);
         
         if (blueDenPiece instanceof Piece && blueDenPiece.getPlayerNumber() == 2) {
-            return true; // Player 2 reached blue den
+            return true; // player 2 reached blue den
         }
         if (greenDenPiece instanceof Piece && greenDenPiece.getPlayerNumber() == 1) {
-            return true; // Player 1 reached green den
+            return true; // player 1 reached green den
         }
         return false;
     }
     
-    private void resetGame() {
-        // Reset the game state
+    private void resetGame() { // reset game state
         board = new board();
         currentPlayer = 1;
         selectedPiece = null;
