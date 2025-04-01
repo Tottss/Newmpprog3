@@ -424,19 +424,7 @@ public class board { // initialize board and pieces
 	 * @return true if the specified lake row is empty, false if a piece is present.
 	 */
 	public boolean isRestrictedTile (Piece piece, int r, int c) { // ensures players don't go to their traps/bases
-		if (piece.getNumber() == 1) {
-			return (r == 2 && c == 0) ||
-				   (r == 3 && c == 0) ||
-				   (r == 4 && c == 0) ||
-				   (r == 3 && c == 1);
-		}
 		
-		else if (piece.getNumber() == 2) {
-			return (r == 2 && c == 8) ||
-				   (r == 3 && c == 8) ||
-				   (r == 4 && c == 8) ||
-				   (r == 3 && c == 7);
-		}
 		if (piece.getNumber() == 1)
 			return r == 3 && c == 0; // only home base
 		else if (piece.getNumber() == 2)
@@ -525,14 +513,24 @@ public class board { // initialize board and pieces
 	}
 	
 	public void trapped (Piece piece) {
-		if (board[piece.getRow()][piece.getColumn()].getTerrain() == '#'){
+		if (isTrap(piece.getRow(), piece.getColumn()) == 1 && piece.getPlayerNumber() == 1){
 		piece.setWeak();
 		}
+		else if (isTrap(piece.getRow(), piece.getColumn()) == 2 && piece.getPlayerNumber() == 2){
+			piece.setWeak();
+			}
 		else{
 			piece.setNotWeak();
 		}
 	 }
 	
+	 public int isTrap(int row, int col){
+		if (board[row][col].getTerrain() == '#' && col < 3)
+			return 1;
+		if (board[row][col].getTerrain() == '#' && col > 5)
+			return 2;	
+		return -1;
+	 }
 	// public void homeBase (Piece piece) {
 		// if (piece.getNumber() == 1)
 			//determines which player wins
