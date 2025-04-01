@@ -212,16 +212,23 @@ public class board { // initialize board and pieces
 		if (targetTile.getObject().equals('~') && piece.canCross()) { // for lions and tigers only
 			//piece.crossLake(m); // note: this already updates the piece's position
 			//System.out.println(piece.getRow() + " "+ piece.getColumn());
-			
-			if ("W".equals(m))
-				targetTile = board[newR - 3][newC];
-			else if ("S".equals(m))
-				targetTile = board[newR + 3][newC];
-			else if ("A".equals(m))
-				targetTile = board[newR][newC - 4];
-			else if ("D".equals(m))
-				targetTile = board[newR][newC + 4];
-			
+			System.out.println("piece crosses lake");
+			if ("W".equals(m)){
+				targetTile = board[newR - 2][newC];
+				System.out.println("go up");
+			}
+			else if ("S".equals(m)){
+				targetTile = board[newR + 2][newC];
+				System.out.println("go down");
+			}
+			else if ("A".equals(m)){
+				targetTile = board[newR][newC - 3];
+				System.out.println("go left");
+			}
+			else if ("D".equals(m)){
+				targetTile = board[newR][newC + 3];
+				System.out.println("go right");
+			}
 			if (targetTile.getObject() instanceof Piece) { // if resulting tile contains an opposing piece
 				Piece targetPiece = targetTile.getPiece();
 				
@@ -239,31 +246,31 @@ public class board { // initialize board and pieces
 			
 			else {
 				if ("W".equals(m)){
-					piece.setPosition(newR - 3, newC); 
+					piece.setPosition(newR - 2, newC); 
 					
 					
-					board[newR - 3][newC].setPiece(piece, newR - 3, newC); 
+					board[newR - 2][newC].setPiece(piece, newR - 2, newC); 
 					board[oldR][oldC].setNull();
 				}
 				else if ("S".equals(m)){
 					piece.setPosition(newR + 3, newC); // update positions
 					// after moving, set the old position back to its original object
 					
-					board[newR + 3][newC].setPiece(piece, newR + 3, newC); // update object on board to its new position
+					board[newR + 2][newC].setPiece(piece, newR + 2, newC); // update object on board to its new position
 					board[oldR][oldC].setNull();
 				}	
 				else if ("A".equals(m)){
-					piece.setPosition(newR, newC - 4); // update positions
+					piece.setPosition(newR, newC - 3); // update positions
 					// after moving, set the old position back to its original object
 					
-					board[newR][newC - 4].setPiece(piece, newR, newC - 4); // update object on board to its new position
+					board[newR][newC - 3].setPiece(piece, newR, newC - 3); // update object on board to its new position
 					board[oldR][oldC].setNull();
 				}
 				else if ("D".equals(m)){
-					piece.setPosition(newR, newC + 4); // update positions
+					piece.setPosition(newR, newC + 3); // update positions
 					// after moving, set the old position back to its original object
 				
-					board[newR][newC + 4].setPiece(piece, newR, newC + 4); // update object on board to its new position
+					board[newR][newC + 3].setPiece(piece, newR, newC + 3); // update object on board to its new position
 					board[oldR][oldC].setNull();
 				}
 				return true; // there's no piece on resulting tile
@@ -277,6 +284,7 @@ public class board { // initialize board and pieces
 				piece.setPosition(newR, newC); // update position of piece
 				targetTile.setPiece(piece, newR, newC); // move piece on board
 				board[oldR][oldC].setNull();
+				System.out.println("piece moves here lake");
 				return true;
 			}
 		}
@@ -367,24 +375,28 @@ public class board { // initialize board and pieces
 			return false;
 		
 		if (targetTile.getObject().equals('~') && !piece.canSwim() && !piece.canCross()){ // if piece wants to go to lake but can't swim
+		System.out.println("piece cant cross lake");
 			return false;
 		}	
 
 		if (targetTile.getObject().equals('~') && piece.canSwim() && !piece.canCross()){
+			System.out.println("piece swims lake");
 			return true;
 		} // if piece wants to go to lake but can't swim
 			
 		
 		// if piece can cross but lake row/col is occupied with ratR
 		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeRowEmpty(newR)){
+			System.out.println("piece cant crosses lake");
 			return false;
 		}
 		
 		if (targetTile.getObject().equals('~') && piece.canCross() && !isLakeColEmpty(newR, currC)){
+			System.out.println("piece crosses lake");
 			return false;
 		}
 
-		if (targetTile.getObject() instanceof Piece) {
+		else if (targetTile.getObject() instanceof Piece) {
 			Piece targetPiece = targetTile.getPiece();
 			if (piece.getNumber() == targetPiece.getNumber()) // ensures it can only capture/move to opposing pieces
 				return false;

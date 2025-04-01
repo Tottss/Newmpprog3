@@ -160,26 +160,26 @@ public class JungleKingBoard extends JPanel {
             } 
             else {
                 // Attempt capture/move
-                if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) {
+                if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber() && board.isValidMove(selectedPiece, row, col)) {
                     // Clicked on own piece - change selection
                     selectedPiece = clickedPiece;
                 } 
                 else {
                     // Attempt capture
-                    if (selectedPiece.capture(clickedPiece)) {
+                    if (selectedPiece.capture(clickedPiece)&& board.isValidMove(selectedPiece, row, col)) {
                         board.movePiece(selectedPiece, row, col);
                         endTurn();
                     }
                 }
-				board.displayBoard();
+				
             }
         } 
         else { // Clicking on empty space
-            if (selectedPiece != null) {
+            if (selectedPiece != null && board.isValidMove(selectedPiece, row, col)) {
                 // Check if move is valid (you should add proper move validation)
                 board.movePiece(selectedPiece, row, col);
                 endTurn();
-				board.displayBoard();
+
             }
         }
         
