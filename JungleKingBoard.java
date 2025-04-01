@@ -156,6 +156,7 @@ public class JungleKingBoard extends JPanel {
 			if (selectedPiece == null) {
 				if (clickedPiece.getPlayerNumber() == currentPlayer) {
 					selectedPiece = clickedPiece;
+					board.trapped(selectedPiece);
 				}
 			} 
 			else {
@@ -170,6 +171,7 @@ public class JungleKingBoard extends JPanel {
 						// Attempt capture
 						if (selectedPiece.capture(clickedPiece) && board.isValidMove(selectedPiece, row, col)) {
 							board.movePiece(selectedPiece, row, col);
+							System.out.println("weak ?"+ selectedPiece.getWeak());
 							endTurn();
 						}
 					}
@@ -180,10 +182,12 @@ public class JungleKingBoard extends JPanel {
 			if (selectedPiece != null && isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
 				if (board.isValidMove(selectedPiece, row, col)) {
 					board.movePiece(selectedPiece, row, col);
+					System.out.println(selectedPiece.getPieceName() + "weak ?"+ selectedPiece.getWeak());
 					endTurn();
 				}
 			}
 		}
+		
 		
 		repaint();
 	}

@@ -524,10 +524,14 @@ public class board { // initialize board and pieces
 		return board[row][col].getTerrain();
 	}
 	
-	// public void trap (Piece piece) {
-		//piece can't go to its own traps?
-		//piece.setWeak();
-	// }
+	public void trapped (Piece piece) {
+		if (board[piece.getRow()][piece.getColumn()].getTerrain() == '#'){
+		piece.setWeak();
+		}
+		else{
+			piece.setNotWeak();
+		}
+	 }
 	
 	// public void homeBase (Piece piece) {
 		// if (piece.getNumber() == 1)
