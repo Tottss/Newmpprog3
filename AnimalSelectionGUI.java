@@ -116,7 +116,7 @@ public class AnimalSelectionGUI extends JPanel {
         for (JButton button : animalButtons) {
             button.setEnabled(false);
         }
-
+    
         // Determine first player
         int firstPlayer;
         String message;
@@ -131,15 +131,53 @@ public class AnimalSelectionGUI extends JPanel {
             firstPlayer = new Random().nextInt(2) + 1;
             message = "Equal strength! Randomly selecting... Player " + firstPlayer + " goes first!";
         }
-
-        // Show results panel
+    
+        // Create results panel
         JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.setBackground(new Color(240, 240, 240));
         
+        // Create panel for the selected cards
+        JPanel cardsPanel = new JPanel(new GridLayout(1, 2, 30, 0));
+        cardsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        cardsPanel.setBackground(new Color(240, 240, 240));
+        
+        // Player 1's card
+        JPanel player1Panel = new JPanel(new BorderLayout());
+        player1Panel.setBackground(new Color(240, 240, 240));
+        JLabel player1Label = new JLabel("Player 1's Card", JLabel.CENTER);
+        player1Label.setFont(new Font("Arial", Font.BOLD, 18));
+        
+        ImageIcon player1Icon = new ImageIcon("img/" + player1Animal.getPieceName() + ".png");
+        Image player1Image = player1Icon.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH);
+        JLabel player1Card = new JLabel(new ImageIcon(player1Image));
+        player1Card.setBorder(BorderFactory.createLineBorder(Color.BLUE, 3));
+        
+        player1Panel.add(player1Label, BorderLayout.NORTH);
+        player1Panel.add(player1Card, BorderLayout.CENTER);
+        
+        // Player 2's card
+        JPanel player2Panel = new JPanel(new BorderLayout());
+        player2Panel.setBackground(new Color(240, 240, 240));
+        JLabel player2Label = new JLabel("Player 2's Card", JLabel.CENTER);
+        player2Label.setFont(new Font("Arial", Font.BOLD, 18));
+        
+        ImageIcon player2Icon = new ImageIcon("img/" + player2Animal.getPieceName() + ".png");
+        Image player2Image = player2Icon.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH);
+        JLabel player2Card = new JLabel(new ImageIcon(player2Image));
+        player2Card.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+        
+        player2Panel.add(player2Label, BorderLayout.NORTH);
+        player2Panel.add(player2Card, BorderLayout.CENTER);
+        
+        // Add cards to panel
+        cardsPanel.add(player1Panel);
+        cardsPanel.add(player2Panel);
+        
+        // Result message
         JLabel resultLabel = new JLabel(message, JLabel.CENTER);
         resultLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        resultPanel.add(resultLabel, BorderLayout.CENTER);
         
+        // Continue button
         JButton continueButton = new JButton("START GAME");
         continueButton.setFont(new Font("Arial", Font.BOLD, 18));
         continueButton.setPreferredSize(new Dimension(200, 50));
@@ -148,8 +186,13 @@ public class AnimalSelectionGUI extends JPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(new Color(240, 240, 240));
         buttonPanel.add(continueButton);
+        
+        // Add components to result panel
+        resultPanel.add(resultLabel, BorderLayout.NORTH);
+        resultPanel.add(cardsPanel, BorderLayout.CENTER);
         resultPanel.add(buttonPanel, BorderLayout.SOUTH);
-
+    
+        // Show results
         removeAll();
         setLayout(new BorderLayout());
         add(resultPanel, BorderLayout.CENTER);
