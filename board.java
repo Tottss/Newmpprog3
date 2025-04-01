@@ -178,6 +178,7 @@ public class board { // initialize board and pieces
 	public boolean movePiece (Piece piece, int newR, int newC) { // updates position of piece; returns value of isValidMove()
 		int oldR = piece.getRow(), oldC = piece.getColumn();
 		boolean valid = false;
+		int crossR = -1,CrossC = -1 ;
 		
 		if (!piece.getAlive()) // piece chosen SHOULD be alive
 			return false;
@@ -215,26 +216,34 @@ public class board { // initialize board and pieces
 			System.out.println("piece crosses lake");
 			if ("W".equals(m)){
 				targetTile = board[newR - 2][newC];
+				crossR = newR - 2;
+				CrossC = newC;
 				System.out.println("go up");
 			}
 			else if ("S".equals(m)){
 				targetTile = board[newR + 2][newC];
+				crossR = newR + 2;
+				CrossC = newC;
 				System.out.println("go down");
 			}
 			else if ("A".equals(m)){
 				targetTile = board[newR][newC - 3];
+				crossR = newR;
+				CrossC = newC - 3;
 				System.out.println("go left");
 			}
 			else if ("D".equals(m)){
 				targetTile = board[newR][newC + 3];
+				crossR = newR;
+				CrossC = newC + 3;
 				System.out.println("go right");
 			}
 			if (targetTile.getObject() instanceof Piece) { // if resulting tile contains an opposing piece
 				Piece targetPiece = targetTile.getPiece();
 				
 				if (piece.capture(targetPiece)) { // piece is stronger/as strong as
-					piece.setPosition(newR, newC);
-					targetTile.setPiece(piece, newR, newC);
+					piece.setPosition(crossR,CrossC);
+					targetTile.setPiece(piece, crossR,CrossC);
 					board[oldR][oldC].setNull();
 					return true;
 				}
