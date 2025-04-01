@@ -21,7 +21,7 @@ public class AppFrame extends JFrame {
 		mainPanel = new JPanel(cardLayout);
 		
 		menuView = new MenuView(this);
-		gameView = new JungleKingBoard();
+		gameView = new JungleKingBoard(1);
 		
 		mainPanel.add(menuView, "Menu");
 		mainPanel.add(gameView, "Game");
@@ -36,7 +36,7 @@ public class AppFrame extends JFrame {
 
 	public void resetGame() {
 		mainPanel.remove(gameView);
-		gameView = new JungleKingBoard();
+		gameView = new JungleKingBoard(1);
 		mainPanel.add(gameView, "Game");
 	}
 }

@@ -18,7 +18,7 @@ public class JungleKingBoard extends JPanel {
     private Image lakeImage, trapImage, denBlueImage, denGreenImage;
     private java.util.Map<String, Image> pieceImages = new java.util.HashMap<>();
 
-    public JungleKingBoard() {
+    public JungleKingBoard(int turn) {
         setLayout(new BorderLayout());
         pieces = new ArrayList<>();
         board = new board();
