@@ -14,26 +14,23 @@ public class AnimalSelectionGUI extends JPanel {
     private Piece player1Animal, player2Animal;
     private JLabel imageLabel;
 
-    public AnimalSelectionGUI(AppFrame appFrame) {
+    public AnimalSelectionGUI (AppFrame appFrame) {
         this.appFrame = appFrame;
         setLayout(new BorderLayout());
         setBackground(new Color(240, 240, 240));
         initializeAnimals();
-
-        // Top panel for instructions
-        JPanel topPanel = new JPanel();
+		
+        JPanel topPanel = new JPanel(); // top panel for instructions
         topLabel = new JLabel("Player 1: Select an animal card", JLabel.CENTER);
         topLabel.setFont(new Font("Arial", Font.BOLD, 24));
         topPanel.add(topLabel);
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel for selected animal display
-        imageLabel = new JLabel("", JLabel.CENTER);
+        imageLabel = new JLabel("", JLabel.CENTER); // center panel for selected animal display
         imageLabel.setPreferredSize(new Dimension(300, 300));
         add(imageLabel, BorderLayout.CENTER);
-
-        // Bottom panel for animal cards
-        JPanel cardPanel = new JPanel(new GridLayout(2, 4, 15, 15));
+		
+        JPanel cardPanel = new JPanel(new GridLayout(2, 4, 15, 15)); // bottom panel for animal cards
         cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 40, 20));
         cardPanel.setBackground(new Color(240, 240, 240));
         animalButtons = new JButton[ANIMAL_COUNT];
@@ -51,24 +48,25 @@ public class AnimalSelectionGUI extends JPanel {
                 animalButtons[i].addActionListener(new AnimalButtonListener(i));
                 cardPanel.add(animalButtons[i]);
             }
-        } catch (Exception e) {
+        }
+		catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading card images", "Error", JOptionPane.ERROR_MESSAGE);
         }
         
         add(cardPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeAnimals() {
+    private void initializeAnimals () { // add all animal pieces
         animals = new ArrayList<>();
-        // Add all animal pieces
-        animals.add(new Piece("elephant-green", 8, 0));
-        animals.add(new Piece("lion-green", 7, 0));
-        animals.add(new Piece("tiger-green", 6, 0));
-        animals.add(new Piece("leopard-green", 5, 0));
-        animals.add(new Piece("wolf-green", 4, 0));
-        animals.add(new Piece("dog-green", 3, 0));
-        animals.add(new Piece("cat-green", 2, 0));
-        animals.add(new Piece("rat-green", 1, 0));
+        
+        animals.add(new Piece("elephant-blue", 8, 0));
+        animals.add(new Piece("lion-blue", 7, 0));
+        animals.add(new Piece("tiger-blue", 6, 0));
+        animals.add(new Piece("leopard-blue", 5, 0));
+        animals.add(new Piece("wolf-blue", 4, 0));
+        animals.add(new Piece("dog-blue", 3, 0));
+        animals.add(new Piece("cat-blue", 2, 0));
+        animals.add(new Piece("rat-blue", 1, 0));
         
         Collections.shuffle(animals);
     }
@@ -81,7 +79,7 @@ public class AnimalSelectionGUI extends JPanel {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed (ActionEvent e) {
             if (animalButtons[index].isEnabled()) {
                 selectionsMade++;
                 Piece selectedAnimal = animals.get(index);
@@ -99,11 +97,13 @@ public class AnimalSelectionGUI extends JPanel {
                     if (selectionsMade == 1) {
                         player1Animal = selectedAnimal;
                         topLabel.setText("Player 2: Select an animal card");
-                    } else if (selectionsMade == 2) {
+                    }
+					else if (selectionsMade == 2) {
                         player2Animal = selectedAnimal;
                         determineFirstPlayer();
                     }
-                } catch (Exception ex) {
+                }
+				catch (Exception ex) {
                     JOptionPane.showMessageDialog(AnimalSelectionGUI.this, 
                         "Error loading animal image", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -112,36 +112,38 @@ public class AnimalSelectionGUI extends JPanel {
     }
 
     private void determineFirstPlayer() {
-        // Disable all cards
-        for (JButton button : animalButtons) {
+		
+        for (JButton button : animalButtons) { // disable all cards
             button.setEnabled(false);
         }
     
-        // Determine first player
+        // determine first player
         int firstPlayer;
         String message;
         
         if (player1Animal.getStrength() > player2Animal.getStrength()) {
             firstPlayer = 1;
             message = "Player 1 (" + player1Animal.getPieceName() + ") goes first!";
-        } else if (player2Animal.getStrength() > player1Animal.getStrength()) {
+        }
+		else if (player2Animal.getStrength() > player1Animal.getStrength()) {
             firstPlayer = 2;
             message = "Player 2 (" + player2Animal.getPieceName() + ") goes first!";
-        } else {
+        }
+		else {
             firstPlayer = new Random().nextInt(2) + 1;
             message = "Equal strength! Randomly selecting... Player " + firstPlayer + " goes first!";
         }
     
-        // Create results panel
+        // create results panel
         JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.setBackground(new Color(240, 240, 240));
         
-        // Create panel for the selected cards
+        // create panel for selected cards
         JPanel cardsPanel = new JPanel(new GridLayout(1, 2, 30, 0));
         cardsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         cardsPanel.setBackground(new Color(240, 240, 240));
         
-        // Player 1's card
+        // player 1's card
         JPanel player1Panel = new JPanel(new BorderLayout());
         player1Panel.setBackground(new Color(240, 240, 240));
         JLabel player1Label = new JLabel("Player 1's Card", JLabel.CENTER);
@@ -155,7 +157,7 @@ public class AnimalSelectionGUI extends JPanel {
         player1Panel.add(player1Label, BorderLayout.NORTH);
         player1Panel.add(player1Card, BorderLayout.CENTER);
         
-        // Player 2's card
+        // player 2's card
         JPanel player2Panel = new JPanel(new BorderLayout());
         player2Panel.setBackground(new Color(240, 240, 240));
         JLabel player2Label = new JLabel("Player 2's Card", JLabel.CENTER);
@@ -164,20 +166,20 @@ public class AnimalSelectionGUI extends JPanel {
         ImageIcon player2Icon = new ImageIcon("img/" + player2Animal.getPieceName() + ".png");
         Image player2Image = player2Icon.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH);
         JLabel player2Card = new JLabel(new ImageIcon(player2Image));
-        player2Card.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+        player2Card.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
         
         player2Panel.add(player2Label, BorderLayout.NORTH);
         player2Panel.add(player2Card, BorderLayout.CENTER);
         
-        // Add cards to panel
+        // add cards to panel
         cardsPanel.add(player1Panel);
         cardsPanel.add(player2Panel);
         
-        // Result message
+        // result message
         JLabel resultLabel = new JLabel(message, JLabel.CENTER);
         resultLabel.setFont(new Font("Arial", Font.BOLD, 24));
         
-        // Continue button
+        // continue button
         JButton continueButton = new JButton("START GAME");
         continueButton.setFont(new Font("Arial", Font.BOLD, 18));
         continueButton.setPreferredSize(new Dimension(200, 50));
@@ -187,12 +189,12 @@ public class AnimalSelectionGUI extends JPanel {
         buttonPanel.setBackground(new Color(240, 240, 240));
         buttonPanel.add(continueButton);
         
-        // Add components to result panel
+        // add components to result panel
         resultPanel.add(resultLabel, BorderLayout.NORTH);
         resultPanel.add(cardsPanel, BorderLayout.CENTER);
         resultPanel.add(buttonPanel, BorderLayout.SOUTH);
     
-        // Show results
+        // show results
         removeAll();
         setLayout(new BorderLayout());
         add(resultPanel, BorderLayout.CENTER);
