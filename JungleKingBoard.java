@@ -7,30 +7,30 @@ import javax.swing.*;
 public class JungleKingBoard extends JPanel {
     public static final int ROWS = 7;
     public static final int COLS = 9;
-    public static final int TILE_SIZE = 60; // Size of each tile in pixels
-    private board board; // Changed from lowercase 'board' to follow conventions
+    public static final int TILE_SIZE = 60;
+    private board board;
     private ArrayList<Piece> pieces;
     public Piece selectedPiece = null;
+    private int currentPlayer = 1; // 1 or 2
+    private JLabel turnLabel; // To display current turn
     
-    // Store images for better performance
-    private Image lakeImage;
-    private Image trapImage;
-    private Image denBlueImage;
-    private Image denGreenImage;
+    // Images storage
+    private Image lakeImage, trapImage, denBlueImage, denGreenImage;
     private java.util.Map<String, Image> pieceImages = new java.util.HashMap<>();
 
     public JungleKingBoard() {
         setLayout(new BorderLayout());
         pieces = new ArrayList<>();
-        board = new board(); // Assuming you rename your board class to Board
+        board = new board();
         
-        // Load all images upfront
+        // Add turn indicator at the top
+        turnLabel = new JLabel("Player 1's Turn", JLabel.CENTER);
+        turnLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        add(turnLabel, BorderLayout.NORTH);
+        
         loadImages();
-        
-        // Set preferred size based on tile size
         setPreferredSize(new Dimension(COLS * TILE_SIZE, ROWS * TILE_SIZE));
         
-        // Add mouse listener for interaction
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -146,35 +146,85 @@ public class JungleKingBoard extends JPanel {
     }
     
     private void handleTileClick(int row, int col) {
-        // Handle piece selection/movement here
         Object cell = board.getGrid(row, col);
         
+        // If clicking on a piece
         if (cell instanceof Piece) {
             Piece clickedPiece = (Piece) cell;
             
+            // Only allow selecting own pieces
             if (selectedPiece == null) {
-                // Select the piece
-                selectedPiece = clickedPiece;
-            } else {
-                // Try to move or capture
-                if (selectedPiece.capture(clickedPiece)) {
-                    // Handle capture
-                    board.movePiece(selectedPiece, row, col);
-                } else {
-                    // Handle movement
-                    board.movePiece(selectedPiece, row, col);
+                if (clickedPiece.getPlayerNumber() == currentPlayer) {
+                    selectedPiece = clickedPiece;
                 }
-                selectedPiece = null;
+            } 
+            else {
+                // Attempt capture/move
+                if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) {
+                    // Clicked on own piece - change selection
+                    selectedPiece = clickedPiece;
+                } 
+                else {
+                    // Attempt capture
+                    if (selectedPiece.capture(clickedPiece)) {
+                        board.movePiece(selectedPiece, row, col);
+                        endTurn();
+                    }
+                }
+				board.displayBoard();
             }
-        } else {
-            // Move to empty space
+        } 
+        else { // Clicking on empty space
             if (selectedPiece != null) {
+                // Check if move is valid (you should add proper move validation)
                 board.movePiece(selectedPiece, row, col);
-                selectedPiece = null;
+                endTurn();
+				board.displayBoard();
             }
         }
         
-        repaint(); // Redraw the board
+        repaint();
+    }
+    
+    private void endTurn() {
+        selectedPiece = null;
+		if (checkWinCondition()) {
+            JOptionPane.showMessageDialog(this, "Player " + currentPlayer + " wins!");
+            resetGame();
+        }
+        currentPlayer = (currentPlayer == 1) ? 2 : 1; // Switch player
+        updateTurnLabel();
+        
+        // Check for win condition
+        
+    }
+    
+    private void updateTurnLabel() {
+        turnLabel.setText("Player " + currentPlayer + "'s Turn");
+        turnLabel.setForeground(currentPlayer == 1 ? Color.BLUE : Color.GREEN);
+    }
+    
+    private boolean checkWinCondition() {
+        // Check if any player reached the opponent's den
+        Piece blueDenPiece = getPiece(3, 0); // Blue den position
+        Piece greenDenPiece = getPiece(3, 8); // Green den position
+        
+        if (blueDenPiece instanceof Piece && blueDenPiece.getPlayerNumber() == 2) {
+            return true; // Player 2 reached blue den
+        }
+        if (greenDenPiece instanceof Piece && greenDenPiece.getPlayerNumber() == 1) {
+            return true; // Player 1 reached green den
+        }
+        return false;
+    }
+    
+    private void resetGame() {
+        // Reset the game state
+        board = new board();
+        currentPlayer = 1;
+        selectedPiece = null;
+        updateTurnLabel();
+        repaint();
     }
     
     public Piece getPiece(int row, int col) {
