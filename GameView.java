@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GameView extends JPanel {
 	public int tileSize = 85;
@@ -7,14 +8,14 @@ public class GameView extends JPanel {
 	private static final int ROWS = 7;
     private static final int COLS = 9;
 	
-	private Board board;
+	private board board;
 	private ArrayList<Piece> pieces;
 	
 	public GameView () {
 		this.setPreferredSize(new Dimension(COLS * tileSize, ROWS * tileSize));
 		this.setBackground(Color.GREEN);
 		
-		board = new Board();
+		board = new board();
 		pieces = new ArrayList<>();
 		
 		initializeBoard();

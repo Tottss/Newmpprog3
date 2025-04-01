@@ -1,5 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class AppFrame extends JFrame {
 
@@ -34,4 +34,10 @@ public class AppFrame extends JFrame {
 		cardLayout.show(mainPanel, "Game");
 	}
 
+	public void resetGame() {
+		mainPanel.remove(gameView);
+		gameView = new JungleKingBoard();
+		mainPanel.add(gameView, "Game");
+	}
 }
+

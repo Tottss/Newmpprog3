@@ -1,187 +1,184 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
 import javax.swing.*;
 
 public class JungleKingBoard extends JPanel {
-    private static final int ROWS = 7;
-    private static final int COLS = 9;
-    private JPanel boardPanel;
-    private JButton[][] squares;
-    private JButton selectedPiece = null;
-	private Board board;
+    public static final int ROWS = 7;
+    public static final int COLS = 9;
+    public static final int TILE_SIZE = 60; // Size of each tile in pixels
+    private board board; // Changed from lowercase 'board' to follow conventions
     private ArrayList<Piece> pieces;
+    public Piece selectedPiece = null;
+    
+    // Store images for better performance
+    private Image lakeImage;
+    private Image trapImage;
+    private Image denBlueImage;
+    private Image denGreenImage;
+    private java.util.Map<String, Image> pieceImages = new java.util.HashMap<>();
 
     public JungleKingBoard() {
-        // setTitle("7x9 Chess Board");
-        // setSize(600, 500);
-        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        pieces = new ArrayList<>();
+        board = new board(); // Assuming you rename your board class to Board
         
-        boardPanel = new JPanel(new GridLayout(ROWS, COLS));
-        squares = new JButton[ROWS][COLS];
-		pieces = new ArrayList<>();
-		board = new Board();
-		
-        initializeBoard();
-		
-        add(boardPanel, BorderLayout.CENTER);
+        // Load all images upfront
+        loadImages();
+        
+        // Set preferred size based on tile size
+        setPreferredSize(new Dimension(COLS * TILE_SIZE, ROWS * TILE_SIZE));
+        
+        // Add mouse listener for interaction
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int col = e.getX() / TILE_SIZE;
+                int row = e.getY() / TILE_SIZE;
+                handleTileClick(row, col);
+            }
+        });
     }
 
-    private void initializeBoard() {
-		int row, col;
-		Piece piece;
-		String imageName;
-		
-        for (row = 0; row < ROWS; row++) { // set up board background
-            for (col = 0; col < COLS; col++) {
-                squares[row][col] = new JButton();
-				
-				if ((row + col) % 2 == 0)
-					squares[row][col].setBackground(Color.LIGHT_GRAY);
-				
-				else
-					squares[row][col].setBackground(Color.DARK_GRAY);
-					
-                
-                squares[row][col].addActionListener(new PieceMoveListener(row, col));
-                
-                boardPanel.add(squares[row][col]);
+    private void loadImages() {
+        lakeImage = loadImage("lake");
+        trapImage = loadImage("trap");
+        denBlueImage = loadImage("den-blue");
+        denGreenImage = loadImage("den-green");
+        String key = null;
+        // Preload all piece images you expect to use
+        // Add more as needed
+        String[] pieceTypes = {"rat", "cat", "dog", "wolf", "leopard", 
+                              "tiger", "lion", "elephant"};
+        for (String type : pieceTypes) {
+            for (int player = 1; player <= 2; player++) {
+                if(player == 1)
+					key = type + "-blue";
+				if(player == 2)
+					key = type + "-green";
+                pieceImages.put(key, loadImage(key));
             }
         }
-		
-		for (row = 0; row < ROWS; row++) { // set up terrain and pieces
-            for (col = 0; col < COLS; col++) {
-				
-				if (board.getGrid(row, col) instanceof Character) { // if is character
-					
-					if ((char)board.getGrid(row, col) == '~')
-						squares[row][col].setIcon(loadPieceImage("lake"));
-					
-					else if ((char)board.getGrid(row, col) == '#')
-						squares[row][col].setIcon(loadPieceImage("trap"));
-				}
-				
-				else if (board.getGrid(row, col) instanceof Piece) { // if is piece
-					piece = (Piece)board.getGrid(row, col);
-					imageName = piece.getPieceName();
-					squares[row][col].setIcon(loadPieceImage(imageName));
-				}
-            }
-        }
-		
-		// manually setup dens
-		squares[3][0].setIcon(loadPieceImage("den-blue"));
-		squares[3][8].setIcon(loadPieceImage("den-green"));
     }
-	
-	private ImageIcon loadPieceImage (String fileName) {
-		String path = "img/" + fileName + ".png";
-		return new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
-	}
-	
-	private class PieceMoveListener implements ActionListener {
-        private int row, col, selectedPieceR = -1, selectedPieceC = -1;
-
-        public PieceMoveListener(int row, int col) { // initializes clicked row and column
-            this.row = row;
-            this.col = col;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-			if (selectedPiece == null) {
-				// Select piece if it belongs to current player
-				Object gridObj = board.getGrid(row, col);
-				if (gridObj instanceof Piece) {
-					selectedPiece = squares[row][col];
-					selectedPiece.setBackground(Color.YELLOW); // Highlight selected
-				}
-			} 
-			
-			else {
-				// Attempt to move
-				JButton target = (JButton) e.getSource();
-				int newRow = row;
-				int newCol = col;
-				
-				// Get the selected piece from the board
-				Piece piece = (Piece) board.getGrid(
-					selectedPiece.getY() / selectedPiece.getHeight(),
-					selectedPiece.getX() / selectedPiece.getWidth()
-				);
-				
-				if (piece != null && board.movePiece(piece, newRow, newCol)) {
-					// Update GUI
-					squares[newRow][newCol].setIcon(selectedPiece.getIcon());
-					squares[newRow][newCol].setBackground(target.getBackground());
-					selectedPiece.setIcon(null);
-					selectedPiece.setBackground((selectedPiece.getY() + selectedPiece.getX()) % 2 == 0 
-						? Color.LIGHT_GRAY : Color.DARK_GRAY);
-					updateBoardDisplay();
-				}
-				selectedPiece = null; // Reset selection
-			}
-		}
-		
-		private Color getOriginalColor (int row, int col) {
-			if ((row + col) % 2 == 0)
-				return Color.LIGHT_GRAY;
-			return Color.DARK_GRAY;
-		}
-		
-		private void resetSelection () {
-			if (selectedPiece != null)
-				selectedPiece.setBackground(getOriginalColor(selectedPieceR, selectedPieceC));
-			
-			selectedPiece = null;
-			
-			if (selectedPieceR >= 0 && selectedPieceC >= 0) {
-				selectedPieceR = -1;
-				selectedPieceC = -1;
-			}
-		}
-		
-		private void updateBoardDisplay () {
-			Piece p;
-			char terrain;
-			
-			for (int r = 0; r < ROWS; r++) {
-				for (int c = 0; c < COLS; c++) {
-					squares[r][c].setIcon(null); // clear current icon
-					
-					
-					if (board.getGrid(r, c) instanceof Character) { // set terrain
-						terrain = (char)board.getGrid(r, c);
-						if (terrain == '~')
-							squares[r][c].setIcon(loadPieceImage("lake"));
-						else if (terrain == '#')
-							squares[r][c].setIcon(loadPieceImage("trap"));
-					}
-					
-					else if (board.getGrid(r, c) instanceof Piece) { // set pieces
-						p = (Piece)board.getGrid(r, c);
-						squares[r][c].setIcon(loadPieceImage(p.getPieceName()));
-					}
-				}
-			}
-			
-			// reset dens in case modified
-			squares[3][0].setIcon(loadPieceImage("den-blue"));
-			squares[3][8].setIcon(loadPieceImage("den-green"));
-		}
+    
+    private Image loadImage(String fileName) {
+        String path = "img/" + fileName + ".png";
+        ImageIcon icon = new ImageIcon(path);
+        return icon.getImage().getScaledInstance(TILE_SIZE, TILE_SIZE, Image.SCALE_SMOOTH);
     }
 
-    private int getButtonIndex(JButton button) {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        // Draw the board background
+        drawBoardBackground(g);
+        
+        // Draw special tiles (lakes, traps, dens)
+        drawSpecialTiles(g);
+        
+        // Draw pieces
+        drawPieces(g);
+        
+        // Draw selection highlight if needed
+        if (selectedPiece != null) {
+            drawSelection(g, selectedPiece);
+        }
+    }
+    
+    private void drawBoardBackground(Graphics g) {
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
-                if (squares[row][col] == button) {
-                    return row + col;
+                // Alternate colors for checkerboard pattern
+                if ((row + col) % 2 == 0) {
+                    g.setColor(Color.LIGHT_GRAY);
+                } else {
+                    g.setColor(Color.DARK_GRAY);
+                }
+                g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+    }
+    
+    private void drawSpecialTiles(Graphics g) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Object cell = board.getGrid(row, col);
+                
+                if (cell instanceof Character) {
+                    char terrain = (Character) cell;
+                    if (terrain == '~') {
+                        g.drawImage(lakeImage, col * TILE_SIZE, row * TILE_SIZE, this);
+                    } else if (terrain == '#') {
+                        g.drawImage(trapImage, col * TILE_SIZE, row * TILE_SIZE, this);
+                    }
                 }
             }
         }
-        return -1;
+        
+        // Draw dens
+        g.drawImage(denBlueImage, 0 * TILE_SIZE, 3 * TILE_SIZE, this);
+        g.drawImage(denGreenImage, 8 * TILE_SIZE, 3 * TILE_SIZE, this);
+    }
+    
+    private void drawPieces(Graphics g) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Object cell = board.getGrid(row, col);
+                if (cell instanceof Piece) {
+                    Piece piece = (Piece) cell;
+                    Image pieceImage = pieceImages.get(piece.getPieceName().toLowerCase());
+                    if (pieceImage != null) {
+                        g.drawImage(pieceImage, col * TILE_SIZE, row * TILE_SIZE, this);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void drawSelection(Graphics g, Piece piece) {
+        g.setColor(Color.YELLOW);
+        g.drawRect(piece.getColumn() * TILE_SIZE, piece.getRow() * TILE_SIZE, 
+                  TILE_SIZE, TILE_SIZE);
+        g.drawRect(piece.getColumn() * TILE_SIZE + 1, piece.getRow() * TILE_SIZE + 1, 
+                  TILE_SIZE - 2, TILE_SIZE - 2);
+    }
+    
+    private void handleTileClick(int row, int col) {
+        // Handle piece selection/movement here
+        Object cell = board.getGrid(row, col);
+        
+        if (cell instanceof Piece) {
+            Piece clickedPiece = (Piece) cell;
+            
+            if (selectedPiece == null) {
+                // Select the piece
+                selectedPiece = clickedPiece;
+            } else {
+                // Try to move or capture
+                if (selectedPiece.capture(clickedPiece)) {
+                    // Handle capture
+                    board.movePiece(selectedPiece, row, col);
+                } else {
+                    // Handle movement
+                    board.movePiece(selectedPiece, row, col);
+                }
+                selectedPiece = null;
+            }
+        } else {
+            // Move to empty space
+            if (selectedPiece != null) {
+                board.movePiece(selectedPiece, row, col);
+                selectedPiece = null;
+            }
+        }
+        
+        repaint(); // Redraw the board
+    }
+    
+    public Piece getPiece(int row, int col) {
+        Object cell = board.getGrid(row, col);
+        return (cell instanceof Piece) ? (Piece) cell : null;
     }
 }
