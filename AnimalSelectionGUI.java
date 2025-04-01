@@ -1,26 +1,23 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 
-public class AnimalSelectionGUI extends JFrame {
-    private static final String DEFAULT_IMAGE = null;
-    private static final String BACK_IMAGE = "img/shou2025.png"; // Image for face-down cards
+public class AnimalSelectionGUI extends JPanel {
+    private static final String BACK_IMAGE = "img/shou2025.png";
     private static final int ANIMAL_COUNT = 8;
-    private List<Piece> animals;
-    private JLabel imageLabel;
+    private AppFrame appFrame;
+    private ArrayList<Piece> animals;
     private JLabel topLabel;
     private JButton[] animalButtons;
     private int selectionsMade = 0;
     private Piece player1Animal, player2Animal;
+    private JLabel imageLabel;
 
-    public AnimalSelectionGUI() {
-        setTitle("Animal Selection");
-        setSize(1000, 800);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public AnimalSelectionGUI(AppFrame appFrame) {
+        this.appFrame = appFrame;
         setLayout(new BorderLayout());
-
+        setBackground(new Color(240, 240, 240));
         initializeAnimals();
 
         // Top panel for instructions
@@ -30,33 +27,35 @@ public class AnimalSelectionGUI extends JFrame {
         topPanel.add(topLabel);
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel for main image display
-        imageLabel = new JLabel(new ImageIcon(DEFAULT_IMAGE));
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        // Center panel for selected animal display
+        imageLabel = new JLabel("", JLabel.CENTER);
+        imageLabel.setPreferredSize(new Dimension(300, 300));
         add(imageLabel, BorderLayout.CENTER);
 
         // Bottom panel for animal cards
-        JPanel cardPanel = new JPanel(new GridLayout(2, 4, 10, 10));
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        JPanel cardPanel = new JPanel(new GridLayout(2, 4, 15, 15));
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 40, 20));
+        cardPanel.setBackground(new Color(240, 240, 240));
         animalButtons = new JButton[ANIMAL_COUNT];
         
-        // Load card back image (should be 200x300 pixels for example)
-        ImageIcon backIcon = new ImageIcon(BACK_IMAGE);
-        Image scaledBack = backIcon.getImage().getScaledInstance(150, 200, Image.SCALE_SMOOTH);
-        ImageIcon scaledBackIcon = new ImageIcon(scaledBack);
-        
-        for (int i = 0; i < ANIMAL_COUNT; i++) {
-            animalButtons[i] = new JButton(scaledBackIcon);
-            animalButtons[i].setPreferredSize(new Dimension(150, 200));
-            animalButtons[i].setBorder(BorderFactory.createEmptyBorder());
-            animalButtons[i].setContentAreaFilled(false);
-            animalButtons[i].addActionListener(new AnimalButtonListener(i));
-            cardPanel.add(animalButtons[i]);
+        try {
+            ImageIcon backIcon = new ImageIcon(BACK_IMAGE);
+            Image scaledBack = backIcon.getImage().getScaledInstance(120, 180, Image.SCALE_SMOOTH);
+            ImageIcon scaledBackIcon = new ImageIcon(scaledBack);
+            
+            for (int i = 0; i < ANIMAL_COUNT; i++) {
+                animalButtons[i] = new JButton(scaledBackIcon);
+                animalButtons[i].setPreferredSize(new Dimension(120, 180));
+                animalButtons[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+                animalButtons[i].setContentAreaFilled(false);
+                animalButtons[i].addActionListener(new AnimalButtonListener(i));
+                cardPanel.add(animalButtons[i]);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading card images", "Error", JOptionPane.ERROR_MESSAGE);
         }
         
         add(cardPanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     private void initializeAnimals() {
@@ -87,55 +86,74 @@ public class AnimalSelectionGUI extends JFrame {
                 selectionsMade++;
                 Piece selectedAnimal = animals.get(index);
                 
-                // Load and scale the animal image
-                ImageIcon animalIcon = new ImageIcon("img/" + selectedAnimal.getPieceName() + ".png");
-                Image scaledAnimal = animalIcon.getImage().getScaledInstance(150, 200, Image.SCALE_SMOOTH);
-                animalButtons[index].setIcon(new ImageIcon(scaledAnimal));
-                animalButtons[index].setDisabledIcon(new ImageIcon(scaledAnimal));
-                animalButtons[index].setEnabled(false);
-                
-                // Update main display image
-                imageLabel.setIcon(new ImageIcon(scaledAnimal));
-                
-                if (selectionsMade == 1) {
-                    player1Animal = selectedAnimal;
-                    topLabel.setText("Player 2: Select an animal card");
-                } else if (selectionsMade == 2) {
-                    player2Animal = selectedAnimal;
-                    determineFirstPlayer();
+                try {
+                    ImageIcon animalIcon = new ImageIcon("img/" + selectedAnimal.getPieceName() + ".png");
+                    Image scaledAnimal = animalIcon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+                    imageLabel.setIcon(new ImageIcon(scaledAnimal));
+                    
+                    Image cardImage = animalIcon.getImage().getScaledInstance(120, 180, Image.SCALE_SMOOTH);
+                    animalButtons[index].setIcon(new ImageIcon(cardImage));
+                    animalButtons[index].setDisabledIcon(new ImageIcon(cardImage));
+                    animalButtons[index].setEnabled(false);
+                    
+                    if (selectionsMade == 1) {
+                        player1Animal = selectedAnimal;
+                        topLabel.setText("Player 2: Select an animal card");
+                    } else if (selectionsMade == 2) {
+                        player2Animal = selectedAnimal;
+                        determineFirstPlayer();
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(AnimalSelectionGUI.this, 
+                        "Error loading animal image", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
     }
 
     private void determineFirstPlayer() {
+        // Disable all cards
         for (JButton button : animalButtons) {
             button.setEnabled(false);
         }
 
+        // Determine first player
+        int firstPlayer;
         String message;
+        
         if (player1Animal.getStrength() > player2Animal.getStrength()) {
+            firstPlayer = 1;
             message = "Player 1 (" + player1Animal.getPieceName() + ") goes first!";
         } else if (player2Animal.getStrength() > player1Animal.getStrength()) {
+            firstPlayer = 2;
             message = "Player 2 (" + player2Animal.getPieceName() + ") goes first!";
         } else {
-            message = "Equal strength! Randomly selecting first player...";
+            firstPlayer = new Random().nextInt(2) + 1;
+            message = "Equal strength! Randomly selecting... Player " + firstPlayer + " goes first!";
         }
 
-        topLabel.setText(message);
+        // Show results panel
+        JPanel resultPanel = new JPanel(new BorderLayout());
+        resultPanel.setBackground(new Color(240, 240, 240));
+        
+        JLabel resultLabel = new JLabel(message, JLabel.CENTER);
+        resultLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        resultPanel.add(resultLabel, BorderLayout.CENTER);
         
         JButton continueButton = new JButton("START GAME");
-        continueButton.setFont(new Font("Arial", Font.BOLD, 24));
-        continueButton.addActionListener(e -> {
-            this.dispose();
-            new JungleKingBoard(player1Animal.getStrength() > player2Animal.getStrength() ? 1 : 2);
-        });
+        continueButton.setFont(new Font("Arial", Font.BOLD, 18));
+        continueButton.setPreferredSize(new Dimension(200, 50));
+        continueButton.addActionListener(e -> appFrame.startGameWithFirstPlayer(firstPlayer));
         
-        getContentPane().remove(1); // Remove the card panel
-        add(continueButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(240, 240, 240));
+        buttonPanel.add(continueButton);
+        resultPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        removeAll();
+        setLayout(new BorderLayout());
+        add(resultPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
-
-
 }

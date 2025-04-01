@@ -11,7 +11,7 @@ public class JungleKingBoard extends JPanel {
     private board board;
     private ArrayList<Piece> pieces;
     public Piece selectedPiece = null;
-    private int currentPlayer = 1; // 1 or 2
+    private int currentPlayer = -1; // 1 or 2
     private JLabel turnLabel; // To display current turn
     
     // Images storage
@@ -22,9 +22,10 @@ public class JungleKingBoard extends JPanel {
         setLayout(new BorderLayout());
         pieces = new ArrayList<>();
         board = new board();
+		currentPlayer = turn;
         
         // Add turn indicator at the top
-        turnLabel = new JLabel("Player 1's Turn", JLabel.CENTER);
+        turnLabel = new JLabel("Player "+turn+"s Turn", JLabel.CENTER);
         turnLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(turnLabel, BorderLayout.NORTH);
         
