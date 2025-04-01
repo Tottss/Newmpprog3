@@ -13,7 +13,7 @@ public class AppFrame extends JFrame {
 
     public AppFrame(){
         setTitle("Jungle King");
-		setSize(1000, 800);
+		setSize(1100, 735);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
