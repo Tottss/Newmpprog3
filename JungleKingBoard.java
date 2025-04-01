@@ -7,7 +7,7 @@ import javax.swing.*;
 public class JungleKingBoard extends JPanel {
     public static final int ROWS = 7;
     public static final int COLS = 9;
-    public static final int TILE_SIZE = 60;
+    public static final int TILE_SIZE = 100;
     private board board;
     private ArrayList<Piece> pieces;
     public Piece selectedPiece = null;
@@ -156,12 +156,14 @@ public class JungleKingBoard extends JPanel {
 			if (selectedPiece == null) {
 				if (clickedPiece.getPlayerNumber() == currentPlayer) {
 					selectedPiece = clickedPiece;
-					board.trapped(selectedPiece);
 				}
 			} 
 			else {
+				
+				if (clickedPiece == selectedPiece) // deselect by clicking on the same selected piece
+					selectedPiece = null;
 				// Check if adjacent (distance of exactly 1)
-				if (isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
+				else if (isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
 					// Attempt capture/move
 					if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) {
 						// Clicked on own piece - change selection
@@ -171,7 +173,6 @@ public class JungleKingBoard extends JPanel {
 						// Attempt capture
 						if (selectedPiece.capture(clickedPiece) && board.isValidMove(selectedPiece, row, col)) {
 							board.movePiece(selectedPiece, row, col);
-							System.out.println("weak ?"+ selectedPiece.getWeak());
 							endTurn();
 						}
 					}
@@ -182,12 +183,10 @@ public class JungleKingBoard extends JPanel {
 			if (selectedPiece != null && isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
 				if (board.isValidMove(selectedPiece, row, col)) {
 					board.movePiece(selectedPiece, row, col);
-					System.out.println(selectedPiece.getPieceName() + "weak ?"+ selectedPiece.getWeak());
 					endTurn();
 				}
 			}
 		}
-		
 		
 		repaint();
 	}
