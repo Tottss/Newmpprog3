@@ -1,3 +1,5 @@
+package Newmpprog3;
+
 import java.util.*;
 
 public class board { // initialize board and pieces
@@ -180,45 +182,28 @@ public class board { // initialize board and pieces
 		boolean valid = false;
 		int crossR = -1,CrossC = -1 ;
 		
-		if (!piece.getAlive()) // piece chosen SHOULD be alive
+		if (!piece.getAlive()) 
 			return false;
 			
 		if (!isValidMove(piece, newR, newC)){
-			// System.out.println("not valid");
+
 			return false;
 		}
 		
 		valid = true;
-		// switch (m) {
-			// case "W":
-				// newR--;
-				// break;
-			// case "S": 
-				// newR++; 
-				// break;
-			// case "A": 
-				// newC-- ; 
-				// break;
-			// case "D": 
-				// newC++; 
-				// break;
-			// default: 
-				// return false; // invalid move input
-		// }
-		// NOTE: added one to each final newR newC since this got commented out
 		
 		Grid targetTile = board[newR][newC];
 		String m = determineMove(oldR, oldC, newR, newC);
 		
 		if (targetTile.getObject().equals('~') && piece.canCross()) { // for lions and tigers only
-			//piece.crossLake(m); // note: this already updates the piece's position
-			//System.out.println(piece.getRow() + " "+ piece.getColumn());
 			System.out.println("piece crosses lake");
 			if ("W".equals(m)){
 				targetTile = board[newR - 2][newC];
 				crossR = newR - 2;
 				CrossC = newC;
 				System.out.println("go up");
+
+
 			}
 			else if ("S".equals(m)){
 				targetTile = board[newR + 2][newC];
@@ -309,6 +294,35 @@ public class board { // initialize board and pieces
 		return valid;
 	}
 	
+
+	/**
+ * Determines the move direction based on position changes, including regular moves and lake crossings.
+ * 
+ * <p>This method evaluates the positional difference between the original and new coordinates
+ * to determine the movement direction, supporting both single-square moves and special lake jumps.
+ * 
+ * <p>Movement codes returned:
+ * <ul>
+ *   <li>"W" - Move/Jump Up (North)</li>
+ *   <li>"A" - Move/Jump Left (West)</li>
+ *   <li>"S" - Move/Jump Down (South)</li>
+ *   <li>"D" - Move/Jump Right (East)</li>
+ *   <li>"null" - Invalid move pattern</li>
+ * </ul>
+ * 
+ * <p>Special lake jump cases (for Lion/Tiger):
+ * <ul>
+ *   <li>Vertical jumps: 3 rows (up/down)</li>
+ *   <li>Horizontal jumps: 4 columns (left/right)</li>
+ * </ul>
+ * 
+ * @param oldR Original row position (0-6)
+ * @param oldC Original column position (0-8)
+ * @param newR New row position (0-6)
+ * @param newC New column position (0-8)
+ * @return Movement direction code ("W","A","S","D") or "null" if invalid
+ * @throws IllegalArgumentException if positions are outside board boundaries
+ */
 	public String determineMove (int oldR, int oldC, int newR, int newC) {
 		// determines the move based on oldR, oldC and newR, newC (for regular movement and crossing lakes)
 		
@@ -515,12 +529,44 @@ public class board { // initialize board and pieces
 		return null;
 	}
 	
+	/**
+	 * Retrieves the content of a specific grid cell, either a Piece or terrain character.
+	 * 
+	 * <p>Returns in this priority:
+	 * <ol>
+	 *   <li>The Piece occupying the cell (if any)</li>
+	 *   <li>The terrain character (if no piece present)</li>
+	 * </ol>
+	 * 
+	 * @param row The row index (0-6) of the grid position
+	 * @param col The column index (0-8) of the grid position
+	 * @return The Piece object if present, otherwise the Character terrain value
+	 * @throws ArrayIndexOutOfBoundsException if row or column is out of valid range
+	 */
 	public Object getGrid (int row, int col) {
 		if (board[row][col].getPiece() != null)
 			return board[row][col].getPiece();
 		return board[row][col].getTerrain();
 	}
 	
+	/**
+	 * Applies or removes the weakened status from a piece based on trap positioning.
+	 * 
+	 * <p>A piece becomes weakened when:
+	 * <ul>
+	 *   <li>Standing on an opponent's trap (left traps for player 2, right traps for player 1)</li>
+	 * </ul>
+	 * 
+	 * <p>The weakened status is removed when:
+	 * <ul>
+	 *   <li>Moving off a trap</li>
+	 *   <li>Standing on one's own trap</li>
+	 *   <li>Standing on normal terrain</li>
+	 * </ul>
+	 * 
+	 * @param piece The piece to check and potentially weaken
+	 * @see #isTrap(int, int)
+	 */
 	public void trapped (Piece piece) {
 		if (isTrap(piece.getRow(), piece.getColumn()) == piece.getPlayerNumber()){
 		piece.setWeak();
@@ -533,6 +579,20 @@ public class board { // initialize board and pieces
 		}
 	 }
 	
+	 /**
+	 * Determines if a grid position contains a trap belonging to a specific player.
+	 * 
+	 * <p>Trap ownership is determined by position:
+	 * <ul>
+	 *   <li>Left side traps (columns 0-2) belong to player 2</li>
+	 *   <li>Right side traps (columns 6-8) belong to player 1</li>
+	 * </ul>
+	 * 
+	 * @param row The row position to check
+	 * @param col The column position to check
+	 * @return 1 if trap belongs to player 1, 2 if belongs to player 2, -1 if not a trap
+	 * @throws ArrayIndexOutOfBoundsException if row or column is out of valid range
+	 */
 	 public int isTrap(int row, int col){
 		if (board[row][col].getTerrain() == '#' && col < 3)
 			return 2;
@@ -540,12 +600,5 @@ public class board { // initialize board and pieces
 			return 1;	
 		return -1;
 	 }
-	// public void homeBase (Piece piece) {
-		// if (piece.getNumber() == 1)
-			//determines which player wins
-	// }
 	
-	// public void replaceObject () { // replaces whatever the piece occupies on the tile
-		
-	// }
 }

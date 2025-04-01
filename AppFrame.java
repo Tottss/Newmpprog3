@@ -1,10 +1,12 @@
+package Newmpprog3;
+
 import java.awt.*;
 import javax.swing.*;
 
 public class AppFrame extends JFrame {
     static int FULL_HEIGHT = 600;
     static int FULL_WIDTH = 800;
-    
+	private int firstPlayer;
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private MenuView menuView;
@@ -31,6 +33,10 @@ public class AppFrame extends JFrame {
         setVisible(true);
     }
     
+	public void returnToMenu() {
+        cardLayout.show(mainPanel, "Menu");
+    }
+
     public void switchToAnimalSelection() {
         cardLayout.show(mainPanel, "AnimalSelection");
     }
@@ -39,7 +45,8 @@ public class AppFrame extends JFrame {
         if (gameView != null) {
             mainPanel.remove(gameView);
         }
-        gameView = new JungleKingBoard(firstPlayer);
+		this.firstPlayer = firstPlayer;
+        gameView = new JungleKingBoard(firstPlayer, this);
         mainPanel.add(gameView, "Game");
         cardLayout.show(mainPanel, "Game");
     }
@@ -52,7 +59,7 @@ public class AppFrame extends JFrame {
         if (gameView != null) {
             mainPanel.remove(gameView);
         }
-        gameView = new JungleKingBoard(1);
+        gameView = new JungleKingBoard(firstPlayer,this);
         mainPanel.add(gameView, "Game");
     }
 }

@@ -1,3 +1,4 @@
+package Newmpprog3;
 public class Piece {
 	protected String pieceName; // e.g., "R1", "C2", "LPD1"
 	protected int strength; // strength ranges from 1 to 8

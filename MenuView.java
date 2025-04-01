@@ -1,10 +1,21 @@
+package Newmpprog3;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * The main menu view for the Jungle King game.
+ * Provides navigation to start the game or exit the application.
+ * Displays the game title and action buttons in a centered layout.
+ */
 public class MenuView extends JPanel {
     private JButton startButton, exitButton;
     private AppFrame appFrame;
     
+    /**
+     * Constructs the main menu view.
+     * 
+     * @param appFrame The main application frame used for navigation between views
+     */
     public MenuView(AppFrame appFrame) {
         this.appFrame = appFrame;
         setBackground(Color.GRAY);
@@ -42,7 +53,11 @@ public class MenuView extends JPanel {
         gbc.gridy = 3;
         add(Box.createVerticalStrut(50), gbc);
     }
-
+    /**
+     * Custom painting of the menu background and components.
+     * 
+     * @param g The Graphics object used for painting
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

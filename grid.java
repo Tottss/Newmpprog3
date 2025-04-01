@@ -1,3 +1,5 @@
+package Newmpprog3;
+
 public class Grid {
 	private Piece piece;
 	private char terrain; // ~, #, @, .
