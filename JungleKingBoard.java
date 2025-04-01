@@ -146,45 +146,56 @@ public class JungleKingBoard extends JPanel {
     }
     
     private void handleTileClick(int row, int col) {
-        Object cell = board.getGrid(row, col);
-        
-        // If clicking on a piece
-        if (cell instanceof Piece) {
-            Piece clickedPiece = (Piece) cell;
-            
-            // Only allow selecting own pieces
-            if (selectedPiece == null) {
-                if (clickedPiece.getPlayerNumber() == currentPlayer) {
-                    selectedPiece = clickedPiece;
-                }
-            } 
-            else {
-                // Attempt capture/move
-                if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber() && board.isValidMove(selectedPiece, row, col)) {
-                    // Clicked on own piece - change selection
-                    selectedPiece = clickedPiece;
-                } 
-                else {
-                    // Attempt capture
-                    if (selectedPiece.capture(clickedPiece)&& board.isValidMove(selectedPiece, row, col)) {
-                        board.movePiece(selectedPiece, row, col);
-                        endTurn();
-                    }
-                }
-				
-            }
-        } 
-        else { // Clicking on empty space
-            if (selectedPiece != null && board.isValidMove(selectedPiece, row, col)) {
-                // Check if move is valid (you should add proper move validation)
-                board.movePiece(selectedPiece, row, col);
-                endTurn();
-
-            }
-        }
-        
-        repaint();
-    }
+		Object cell = board.getGrid(row, col);
+		
+		// If clicking on a piece
+		if (cell instanceof Piece) {
+			Piece clickedPiece = (Piece) cell;
+			
+			// Only allow selecting own pieces
+			if (selectedPiece == null) {
+				if (clickedPiece.getPlayerNumber() == currentPlayer) {
+					selectedPiece = clickedPiece;
+				}
+			} 
+			else {
+				// Check if adjacent (distance of exactly 1)
+				if (isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
+					// Attempt capture/move
+					if (selectedPiece.getPlayerNumber() == clickedPiece.getPlayerNumber()) {
+						// Clicked on own piece - change selection
+						selectedPiece = clickedPiece;
+					} 
+					else {
+						// Attempt capture
+						if (selectedPiece.capture(clickedPiece) && board.isValidMove(selectedPiece, row, col)) {
+							board.movePiece(selectedPiece, row, col);
+							endTurn();
+						}
+					}
+				}
+			}
+		} 
+		else { // Clicking on empty space
+			if (selectedPiece != null && isAdjacent(selectedPiece.getRow(), selectedPiece.getColumn(), row, col)) {
+				if (board.isValidMove(selectedPiece, row, col)) {
+					board.movePiece(selectedPiece, row, col);
+					endTurn();
+				}
+			}
+		}
+		
+		repaint();
+	}
+	
+	// Helper method to check if two positions are adjacent (distance of 1)
+	private boolean isAdjacent(int row1, int col1, int row2, int col2) {
+		int rowDiff = Math.abs(row1 - row2);
+		int colDiff = Math.abs(col1 - col2);
+		
+		// Either same row and adjacent column, or same column and adjacent row
+		return (rowDiff == 0 && colDiff == 1) || (rowDiff == 1 && colDiff == 0);
+	}
     
     private void endTurn() {
         selectedPiece = null;
