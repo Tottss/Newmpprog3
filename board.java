@@ -513,10 +513,10 @@ public class board { // initialize board and pieces
 	}
 	
 	public void trapped (Piece piece) {
-		if (isTrap(piece.getRow(), piece.getColumn()) == 1 && piece.getPlayerNumber() == 1){
+		if (isTrap(piece.getRow(), piece.getColumn()) == piece.getPlayerNumber()){
 		piece.setWeak();
 		}
-		else if (isTrap(piece.getRow(), piece.getColumn()) == 2 && piece.getPlayerNumber() == 2){
+		else if (isTrap(piece.getRow(), piece.getColumn()) == piece.getPlayerNumber()){
 			piece.setWeak();
 			}
 		else{
@@ -526,9 +526,9 @@ public class board { // initialize board and pieces
 	
 	 public int isTrap(int row, int col){
 		if (board[row][col].getTerrain() == '#' && col < 3)
-			return 1;
+			return 2;
 		if (board[row][col].getTerrain() == '#' && col > 5)
-			return 2;	
+			return 1;	
 		return -1;
 	 }
 	// public void homeBase (Piece piece) {
